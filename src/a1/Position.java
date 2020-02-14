@@ -1,6 +1,6 @@
 package a1;
 
-import java.util.Objects;
+import java.util.*;
 
 public class Position{
   private int x;
@@ -42,8 +42,13 @@ public class Position{
   }
 
   public static void main(String[] args) {
-    Position aa = new Position(3, 4);
-    Position bb = new Position(3, 4);
-    System.out.println(aa.equals(bb));
+//    Position aa = new Position(3, 4);
+//    Position bb = new Position(3, 4);
+//    System.out.println(aa.equals(bb));
+//
+//    Map<Position, Integer> hmap = new HashMap<>();
+//    System.out.println(hmap.put(aa, 1));
+//    System.out.println(hmap.put(aa, 1));
+//    System.out.println(hmap);
   }
 }

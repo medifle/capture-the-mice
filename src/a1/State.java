@@ -1,22 +1,41 @@
 package a1;
 
+import javafx.geometry.Pos;
+
 import java.util.*;
 
 public class State {
-  private ArrayList<Position> mice = new ArrayList<>();
-  private ArrayList<Position> cats = new ArrayList<>();
-  private ArrayList<Position> cheeses = new ArrayList<>();
+  private Set<Position> mice = new HashSet<>();
+  private Set<Position> cats = new HashSet<>();
+  private Set<Position> cheeses = new HashSet<>();
 
-  public List<Position> getMice() {
+  public Set<Position> getMice() {
     return mice;
   }
-
-  public List<Position> getCats() {
+  public Set<Position> getCats() {
     return cats;
   }
-
-  public List<Position> getCheeses() {
+  public Set<Position> getCheeses() {
     return cheeses;
+  }
+
+  public boolean isExist(Position p) {
+    return mice.contains(p) || cats.contains(p) || cheeses.contains(p);
+  }
+
+  public void removeMouse(Position p) {
+    mice.remove(p);
+  }
+
+  public void removeCheese(Position p) {
+    cheeses.remove(p);
+  }
+
+  public boolean isCatEnd() {
+    return mice.isEmpty();
+  }
+  public boolean isMouseEnd() {
+    return !mice.isEmpty() && cheeses.isEmpty();
   }
 
   /**
@@ -36,7 +55,7 @@ public class State {
     uniqueGenerate(board, rand, cheeses, e);
   }
 
-  public void uniqueGenerate(Board board, Random rand, List<Position> li, int num) {
+  public void uniqueGenerate(Board board, Random rand, Set<Position> hset, int num) {
     int rows = board.getRows();
     int cols = board.getCols();
 
@@ -47,15 +66,14 @@ public class State {
 
       if (board.isEmptyAt(x,y)) {
         board.set(x, y, 1);
-        li.add(new Position(x,y));
+        hset.add(new Position(x,y));
         count += 1;
       }
     }
   }
 
   public String toString() {
-    //todo: for state space hashing
-    // M1,2;C4,3;E1,4;2,5;3,4;
+    // e.g. M1,2;C4,3;E1,4;2,5;3,4;
     StringBuilder sb = new StringBuilder();
     sb.append("M");
     for (Position mouse : mice) {
