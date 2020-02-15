@@ -3,11 +3,11 @@ package a1;
 import java.util.*;
 
 public class State {
-  private Set<Position> mice = new HashSet<>();
+  private List<Position> mice = new ArrayList<>();
   private List<Position> cats = new ArrayList<>();
   private Set<Position> cheeses = new HashSet<>();
 
-  public Set<Position> getMice() {
+  public List<Position> getMice() {
     return mice;
   }
   public List<Position> getCats() {
@@ -31,7 +31,7 @@ public class State {
     return !mice.isEmpty() && cheeses.isEmpty();
   }
 
-  public State(Set<Position> mice, List<Position> cats, Set<Position> cheeses) {
+  public State(List<Position> mice, List<Position> cats, Set<Position> cheeses) {
     this.mice = mice;
     this.cats = cats;
     this.cheeses = cheeses;
@@ -42,7 +42,7 @@ public class State {
     // if mouse and cheese overlap
     for (Position mp : mice) {
       if (cheeses.contains(mp)) {
-        Log.i("STATE", "sanitize TEST mouse&cheese: " + mp);
+        Log.d("STATE", "sanitize TEST mouse&cheese: " + mp);
         removeCheese(mp);
       }
     }
@@ -50,7 +50,7 @@ public class State {
     // if cat and mouse overlap
     for (Position cp : cats) {
       if (mice.contains(cp)) {
-        Log.i("STATE", "sanitize TEST cat&mouse: " + cp);
+        Log.d("STATE", "sanitize TEST cat&mouse: " + cp);
         removeMouse(cp);
       }
     }
@@ -111,12 +111,12 @@ public class State {
 
   public static void main(String[] args) {
 
-//    Set<Position> mc = new HashSet<>();
+//    List<Position> mc = new ArrayList<>();
 //    Position p1 = new Position(1, 1);
 //    mc.add(p1);
 //    mc.add(new Position(2, 0));
 //
-//    Set<Position> mc2 = new HashSet<>(mc);
+//    List<Position> mc2 = new ArrayList<>(mc);
 //    System.out.println(mc2 == mc);
 //    mc2.remove(p1);
 //    System.out.println(mc);

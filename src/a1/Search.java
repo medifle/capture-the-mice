@@ -38,7 +38,7 @@ public class Search {
 
   private Position calcMouseNextPos(Position p, Set<Position> cheeses) {
     if (cheeses.size() == 0) {
-      Log.i("calcMouseNextPos", "cheese set is empty");
+      Log.d("calcMouseNextPos", "cheese set is empty");
       return null;
     }
 
@@ -55,7 +55,7 @@ public class Search {
     // calc mouse next position
     Position rp = genMouseMove(p, minCp);
 
-    Log.i("calcMouseNextPos", "closest cheese " + minCp.toString() +
+    Log.d("calcMouseNextPos", "closest cheese " + minCp.toString() +
       "; current position: " + p + "; next position: " + rp);
 
     return rp;
@@ -91,7 +91,7 @@ public class Search {
     if (board.isValidPos(p7)) positions.add(p7);
 
     if (positions.size() == 0) {
-      Log.i("genMouseMove", "mouse runs out of space");
+      Log.d("genMouseMove", "mouse runs out of space");
       return null;
     }
 
@@ -111,22 +111,22 @@ public class Search {
 
   private List<Node> expand(Node u) {
     if (u.state.isMouseEnd()) {
-      Log.i("EXPAND", "mouse end. " + u.state.toString());
+      Log.d("EXPAND", "mouse end. " + u.state.toString());
       return null;
     }
 
-//    Log.i("EXPAND", "u depth " + u.depth + "  " + u.state.toString() + "  stateSpace " + stateSpace.toString());
-    Log.i("EXPAND", "u depth " + u.depth + "  " + u.state.toString());
+//    Log.d("EXPAND", "u depth " + u.depth + "  " + u.state.toString() + "  stateSpace " + stateSpace.toString());
+    Log.d("EXPAND", "u depth " + u.depth + "  " + u.state.toString());
 
     if (stateSpace.contains(u.state.toString())) {
-      Log.i("EXPAND", "state hit. " + u.state.toString());
+      Log.d("EXPAND", "state hit. " + u.state.toString());
       return null;
     }
 
     // add to stateSpace to avoid cycle
     stateSpace.add(u.state.toString());
 
-    Set<Position> uMice = u.state.getMice();
+    List<Position> uMice = u.state.getMice();
     List<Position> uCats = u.state.getCats();
     Set<Position> uCheeses = u.state.getCheeses();
     List<Node> expandedNodes = new LinkedList<>();
@@ -135,7 +135,7 @@ public class Search {
     Set<Position> cheeses = new HashSet<>(uCheeses);
 
     // generate new mouse positions
-    Set<Position> mice = new HashSet<>();
+    List<Position> mice = new ArrayList<>();
     for (Position p : uMice) {
       Position nextPos = calcMouseNextPos(p, cheeses);
       if (nextPos != null) {
@@ -143,7 +143,7 @@ public class Search {
       }
       // test
       else {
-        Log.i("EXPAND", "calcMouseNextPos is null" + u.toString());
+        Log.d("EXPAND", "calcMouseNextPos is null" + u.toString());
       }
     }
 
@@ -158,7 +158,7 @@ public class Search {
         nextCats.add(fp);
 
         // we need a new Set reference but storing the same mice positions which are read only
-        Set<Position> nextMice = new HashSet<>(mice);
+        List<Position> nextMice = new ArrayList<>(mice);
         // similar to nextMice
         Set<Position> nextCheeses = new HashSet<>(cheeses);
 
@@ -179,7 +179,7 @@ public class Search {
           nextCats.add(fp1);
 
           // we need a new Set reference but storing the same mice positions which are read only
-          Set<Position> nextMice = new HashSet<>(mice);
+          List<Position> nextMice = new ArrayList<>(mice);
           // similar to nextMice
           Set<Position> nextCheeses = new HashSet<>(cheeses);
 
@@ -191,7 +191,7 @@ public class Search {
     }
 
     if (expandedNodes.size() == 0) {
-      Log.i("EXPAND", "expandedNodes is empty");
+      Log.d("EXPAND", "expandedNodes is empty");
       return null;
     }
     return expandedNodes;
@@ -240,8 +240,8 @@ public class Search {
     while (!fringe.isEmpty()) {
       Node u = fringe.poll();
       if (testGoal(u)) {
-//        Log.i("BFS:GOAL", u.state.toString());
-//        Log.i("BFS:GOAL", fringe.toString());
+//        Log.d("BFS:GOAL", u.state.toString());
+//        Log.d("BFS:GOAL", fringe.toString());
         Log.i("BFS", "solution found: " + nodeCount + " nodes searched");
         return genSolution(u);
       }
@@ -253,7 +253,7 @@ public class Search {
       }
       // test
       else {
-        Log.i("BFS", "expand() returns null. " + u);
+        Log.d("BFS", "expand() returns null. " + u);
       }
     }
 

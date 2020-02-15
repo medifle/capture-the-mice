@@ -65,7 +65,7 @@ public class Board {
   public void loadState(State state) {
     clear();
 
-    Set<Position> mice = state.getMice();
+    List<Position> mice = state.getMice();
     List<Position> cats = state.getCats();
     Set<Position> cheeses = state.getCheeses();
     for (Position p : cheeses) {
@@ -90,7 +90,7 @@ public class Board {
     String[] cArr = c.split(";");
     String[] eArr = e.split(";");
 
-    Set<Position> mice = new HashSet<>();;
+    List<Position> mice = new ArrayList<>();;
     List<Position> cats = new ArrayList<>();
     Set<Position> cheeses = new HashSet<>();
     for (String ms : mArr) {

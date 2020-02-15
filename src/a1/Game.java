@@ -27,9 +27,9 @@ public class Game {
    * Randomly initialize a board
    * @param n board dimension (square)
    */
-  public static void init(int n) {
+  public static void init(int n, int m, int c, int e) {
     board = new Board(n);
-    state = board.initRandomState(3, 2, 5);
+    state = board.initRandomState(m, c, e);
     actionSeq = new LinkedList<>();
     gameOver = false;
   }
@@ -47,10 +47,15 @@ public class Game {
   }
 
   public static void main(String[] args) {
+    /**
+     * Only support at most 2 cats!
+     */
     while (gameRestart) {
-//      init(12);
+      init(12, 1, 1, 3);
+//      init(20, 3, 2, 6);
 //      init(12, "11,0;-0,11;-11,1;10,3;"); // mouse win
-      init(12, "1,5;0,9;1,11;-11,6;11,3;-6,5;10,9;0,8;10,5;9,6;");
+//      init(12, "1,5;0,9;1,11;-11,6;-6,5;10,9;0,8;10,5;9,6;");
+//      init(12, "1,5;0,9;1,11;-11,6;11,3;-6,5;10,9;0,8;10,5;9,6;");
 
       if (actionSeq.size() == 0) {
         Search ai = new Search(state, board);
@@ -68,7 +73,7 @@ public class Game {
         if (state != null) {
           board.loadState(state);
         } else {
-          Log.i("GAME:ERROR", "action state is null");
+          Log.e("GAME:ERROR", "action state is null");
           gameOver = true;
           gameRestart = false;
         }
