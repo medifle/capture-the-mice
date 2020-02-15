@@ -8,69 +8,92 @@ public class Game {
   private static State state;
 
   private static boolean gameOver = true;
+  private static boolean gameRestart = true;
 
   // cats action states sequence
-  private static Queue<State> actionSeq = new LinkedList<>();
+  private static Queue<State> actionSeq;
 
   public static void printBoard(Board board) {
     System.out.println(board.toString());
   }
 
-  public static void updateState(State state) {
-    //move cats
-
-    //remove dead mouse
-    //gameStatus check
-    //mouse move
+  public static void printState(State state, int rows, int cols) {
+    Board bd = new Board(rows, cols);
+    bd.loadState(state);
+    printBoard(bd);
   }
 
+  /**
+   * Randomly initialize a board
+   * @param n board dimension (square)
+   */
   public static void init(int n) {
     board = new Board(n);
-    state = board.initState();
+    state = board.initRandomState(3, 2, 5);
+    actionSeq = new LinkedList<>();
+    gameOver = false;
+  }
+
+  /**
+   * Load a board with a given state
+   * @param n board dimension (square)
+   * @param s state string representation
+   */
+  public static void init(int n, String s) {
+    board = new Board(n);
+    state = board.loadState(s);
+    actionSeq = new LinkedList<>();
     gameOver = false;
   }
 
   public static void main(String[] args) {
-    //#GAME LOOP
-    init(12);
+    while (gameRestart) {
+//      init(12);
+//      init(12, "11,0;-0,11;-11,1;10,3;"); // mouse win
+      init(12, "1,5;0,9;1,11;-11,6;11,3;-6,5;10,9;0,8;10,5;9,6;");
 
-
-    if (actionSeq.size() == 0) {
-      //todo: run algo like BFS to fill actionSeq
-    }
-
-    while (!gameOver) {
-      printBoard(board);
-
-      state.getCheeses().clear();
-
-      if (state.isCatEnd()) {
-        System.out.println("GAME: CAT WIN!\n");
-      } else if (state.isMouseEnd()) {
-        System.out.println("GAME: MOUSE WIN!\n");
+      if (actionSeq.size() == 0) {
+        Search ai = new Search(state, board);
+        actionSeq = ai.BFS();
+        if (actionSeq == null) {
+          Log.i("GAME", "Cat AI failed! MOUSE WIN!\n");
+          break;
+        }
       }
 
-      //1s interval
-      try {
-        Thread.sleep(1000);
-      } catch(InterruptedException ex) {
-        ex.printStackTrace();
+      System.out.println();// add one line space
+      Log.i("GAME", "Start!");
+      while (!gameOver) {
+        state = actionSeq.poll();
+        if (state != null) {
+          board.loadState(state);
+        } else {
+          Log.i("GAME:ERROR", "action state is null");
+          gameOver = true;
+          gameRestart = false;
+        }
+
+        Log.i("GAME", "next actionState " + state.toString());
+        printBoard(board);
+
+        if (state.isMouseEnd()) {
+          Log.i("GAME", "MOUSE WIN!");
+          gameOver = true;
+          gameRestart = true;
+        } else if (state.isCatEnd()) {
+          Log.i("GAME", "CAT WIN!");
+          gameOver = true;
+          gameRestart = false;
+        }
+
+
+        //1s interval
+        try {
+          Thread.sleep(1000);
+        } catch(InterruptedException ex) {
+          ex.printStackTrace();
+        }
       }
-
-      //get next action state
-//      State nextActionState = actionSeq.poll();
-//      if (nextActionState != null) {
-//        board.loadState(nextActionState);
-//      }
     }
-
-
-
-
-
-
-    // update state
-      //cat,mouse move
-      //mouse dead, cheese eaten
   }
 }

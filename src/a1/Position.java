@@ -11,13 +11,20 @@ public class Position{
     this.y = y;
   }
 
+  // "1,2"
+  public Position(String s) {
+    String[] sArr = s.split(",");
+    this.x = Integer.parseInt(sArr[0]);
+    this.y = Integer.parseInt(sArr[1]);
+  }
+
   public int getX(){ return x; }
   public int getY(){ return y; }
 
-  public void update(int x, int y) {
-    this.x = x;
-    this.y = y;
-  }
+//  public void update(int x, int y) {
+//    this.x = x;
+//    this.y = y;
+//  }
 
   @Override
   public boolean equals(Object o) {
@@ -42,13 +49,8 @@ public class Position{
   }
 
   public static void main(String[] args) {
-//    Position aa = new Position(3, 4);
+//    Position aa = new Position(1, 1);
 //    Position bb = new Position(3, 4);
 //    System.out.println(aa.equals(bb));
-//
-//    Map<Position, Integer> hmap = new HashMap<>();
-//    System.out.println(hmap.put(aa, 1));
-//    System.out.println(hmap.put(aa, 1));
-//    System.out.println(hmap);
   }
 }

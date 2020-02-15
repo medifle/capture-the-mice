@@ -24,11 +24,18 @@ public class Board {
     board = new int[n][n];
   }
 
+  public Board(int rows, int cols) {
+    this.rows = rows;
+    this.cols = cols;
+    board = new int[rows][cols];
+  }
+
+  public boolean isValidPos(Position p) {
+    return p.getX() >= 0 && p.getX() < rows && p.getY() >= 0 && p.getY() < cols;
+  }
+
   public boolean isEmptyAt(int row, int col) {
-    if (board[row][col] == 0) {
-      return true;
-    }
-    return false;
+    return board[row][col] == EMPTY;
   }
 
   public int getRows() {
@@ -47,33 +54,64 @@ public class Board {
     board = new int[rows][cols];
   }
 
-  public State initState() {
+  public State initRandomState(int m, int c, int e) {
     clear();
-    State initialState = new State(rows, 1, 1, 3);
+
+    State initialState = new State(rows, m, c, e);
     loadState(initialState);
     return initialState;
   }
 
   public void loadState(State state) {
+    clear();
+
     Set<Position> mice = state.getMice();
-    Set<Position> cats = state.getCats();
+    List<Position> cats = state.getCats();
     Set<Position> cheeses = state.getCheeses();
-    for (Position p : mice) {
-      set(p.getY(), p.getX(), MOUSE);
-    }
-    for (Position p : cats) {
-      set(p.getY(), p.getX(), CAT);
-    }
     for (Position p : cheeses) {
       set(p.getY(), p.getX(), CHEESE);
     }
-  }
-
-  public void loadCatsState(State state) {
-    Set<Position> cats = state.getCats();
+    for (Position p : mice) {
+      set(p.getY(), p.getX(), MOUSE);
+    }
+    //if the cat and cheese are at the same position, show cat
     for (Position p : cats) {
       set(p.getY(), p.getX(), CAT);
     }
+  }
+
+  public State loadState(String s) {
+    String[] sArr = s.split("-");
+    String m = sArr[0];
+    String c = sArr[1];
+    String e = sArr[2];
+
+    String[] mArr = m.split(";");
+    String[] cArr = c.split(";");
+    String[] eArr = e.split(";");
+
+    Set<Position> mice = new HashSet<>();;
+    List<Position> cats = new ArrayList<>();
+    Set<Position> cheeses = new HashSet<>();
+    for (String ms : mArr) {
+      Position mp = new Position(ms);
+      mice.add(mp);
+    }
+
+    for (String cs : cArr) {
+      Position cp = new Position(cs);
+      cats.add(cp);
+    }
+
+    for (String es : eArr) {
+      Position ep = new Position(es);
+      cheeses.add(ep);
+    }
+
+    State state = new State(mice, cats, cheeses);
+    loadState(state);
+
+    return state;
   }
 
   public String toString() {
@@ -97,7 +135,7 @@ public class Board {
           sb.append(CHEESE_EMOJI).append(" ");
         }
       }
-      sb.append("#\n");
+      sb.append(i + "\n");
     }
     sb.append("***".repeat(cols)).append("**\n");
     return sb.toString();
@@ -105,12 +143,15 @@ public class Board {
 
 
   public static void main(String[] args) {
-//    for (CellType c : CellType.values()) {
-//      System.out.println(c);
-//    }
 
-//    Board board = new Board(12);
-//    board.initState();
-//    System.out.println(board.toString());
+    Board board = new Board(12);
+//    board.loadState("7,1;-2,6;-9,1;9,6;6,10;");
+    board.loadState("7,1;-2,6;-6,10;9,1;9,6;");
+    System.out.println(board.toString());
+
+    //    Board board = new Board(12);
+    //    board.initRandomState();
+    //    System.out.println(board.toString());
+
   }
 }
