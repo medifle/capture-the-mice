@@ -9,8 +9,6 @@ public class Search {
   private Set<String> stateSpace = new HashSet<>();
   private Board board;
 
-  private int nodeCount = 0;
-
   public Search(State state, Board board) {
     this.state = state;
     this.board = board;
@@ -25,7 +23,7 @@ public class Search {
 
     while (u != null) {
       q.push(u.state);
-      Log.i("genSolution", "depth: " + u.depth + " " + u.state.toString());
+      Log.i("genSolution", "depth " + u.depth + "  " + u.state.toString());
       u = u.parent;
     }
 
@@ -229,7 +227,7 @@ public class Search {
   }
 
   public Queue<State> BFS() {
-    nodeCount = 0;
+    int nodeCount = 0;
 
     Queue<Node> fringe = new LinkedList<>();
     Node r = new Node(state);
@@ -240,8 +238,7 @@ public class Search {
     while (!fringe.isEmpty()) {
       Node u = fringe.poll();
       if (testGoal(u)) {
-//        Log.d("BFS:GOAL", u.state.toString());
-//        Log.d("BFS:GOAL", fringe.toString());
+        Log.d("BFS:GOAL", fringe.toString());
         Log.i("BFS", "solution found: " + nodeCount + " nodes searched");
         return genSolution(u);
       }
@@ -250,10 +247,6 @@ public class Search {
       if (children != null) {
         fringe.addAll(children);
         nodeCount += children.size();
-      }
-      // test
-      else {
-        Log.d("BFS", "expand() returns null. " + u);
       }
     }
 

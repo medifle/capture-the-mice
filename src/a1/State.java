@@ -42,7 +42,7 @@ public class State {
     // if mouse and cheese overlap
     for (Position mp : mice) {
       if (cheeses.contains(mp)) {
-        Log.d("STATE", "sanitize TEST mouse&cheese: " + mp);
+        Log.d("STATE", "sanitize Mouse&Cheese: " + mp);
         removeCheese(mp);
       }
     }
@@ -50,7 +50,7 @@ public class State {
     // if cat and mouse overlap
     for (Position cp : cats) {
       if (mice.contains(cp)) {
-        Log.d("STATE", "sanitize TEST cat&mouse: " + cp);
+        Log.d("STATE", "sanitize Cat&Mouse: " + cp);
         removeMouse(cp);
       }
     }
