@@ -51,16 +51,17 @@ public class Game {
      * Only support at most 2 cats!
      */
     while (gameRestart) {
-//      init(12, 1, 1, 3);
+      init(12, 1, 1, 3);
 //      init(16, 3, 2, 6);
-      init(12, "7,1;-2,6;-9,1;9,6;6,10;");
+//      init(12, "7,1;-2,6;-9,1;9,6;6,10;");
 //      init(12, "11,0;-0,11;-11,1;10,3;"); // mouse win
 //      init(12, "1,5;0,9;1,11;-11,6;-6,5;10,9;0,8;10,5;9,6;");
 //      init(12, "1,5;0,9;1,11;-11,6;11,3;-6,5;10,9;0,8;10,5;9,6;");
 
       if (actionSeq.size() == 0) {
         Search ai = new Search(state, board);
-        actionSeq = ai.BFS();
+//        actionSeq = ai.BFS();
+        actionSeq = ai.DFS();
         if (actionSeq == null) {
           Log.i("GAME", "Cat AI failed!");
           Log.i("GAME", "MOUSE WIN!");

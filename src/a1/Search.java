@@ -257,6 +257,40 @@ public class Search {
     return null;
   }
 
+  public Queue<State> DFS() {
+    int nodeCount = 0;
+
+    Stack<Node> fringe = new Stack<>();
+    Node r = new Node(state);
+    nodeCount += 1;
+
+    if (testGoal(r)) {
+      Log.i("DFS", "solution found: " + nodeCount + " nodes searched");
+      return genSolution(r);
+    }
+    fringe.push(r);
+
+    while (!fringe.empty()) {
+      Node u = fringe.pop();
+      List<Node> children = expand(u);
+      if (children != null) {
+        nodeCount += children.size();
+        for (Node d : children) {
+          if (testGoal(d)) {
+            Log.i("DFS", "solution found: " + nodeCount + " nodes searched");
+            return genSolution(d);
+          }
+        }
+        Collections.reverse(children); // optional
+        fringe.addAll(children);
+      }
+    }
+
+    //run out of searchable nodes
+    Log.i("DFS", "solution not found: " + nodeCount + " nodes searched");
+    return null;
+  }
+
   public static void main(String[] args) {
 
   }
