@@ -93,7 +93,7 @@ public class Game {
         }
 
 
-        //1s interval
+        // 1s interval
         try {
           Thread.sleep(1000);
         } catch(InterruptedException ex) {

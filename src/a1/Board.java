@@ -135,7 +135,7 @@ public class Board {
           sb.append(CHEESE_EMOJI).append(" ");
         }
       }
-      sb.append(i + "\n");
+      sb.append(i).append("\n");
     }
     sb.append("***".repeat(cols)).append("**\n");
     return sb.toString();

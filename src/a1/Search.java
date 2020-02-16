@@ -113,7 +113,6 @@ public class Search {
       return null;
     }
 
-//    Log.d("EXPAND", "u depth " + u.depth + "  " + u.state.toString() + "  stateSpace " + stateSpace.toString());
     Log.d("EXPAND", "u depth " + u.depth + "  " + u.state.toString());
 
     if (stateSpace.contains(u.state.toString())) {
@@ -171,7 +170,6 @@ public class Search {
       List<Position> fCats1 = forkCatPos(up1);
       for (Position fp0 : fCats0) {
         for (Position fp1 : fCats1) {
-          // todo: two cats case not tested
           List<Position> nextCats = new ArrayList<>();
           nextCats.add(fp0);
           nextCats.add(fp1);
