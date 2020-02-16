@@ -56,12 +56,18 @@ public class Position implements Comparable<Position>{
   public static void main(String[] args) {
 //    Position aa = new Position(1, 1);
 //    Position bb = new Position(3, 4);
+//    Position cc = new Position(7, 4);
 //    System.out.println(aa.equals(bb));
 //
-//    Queue<Position> pq = new PriorityQueue<>(Collections.reverseOrder());
-//    pq.add(aa);
-//    pq.add(bb);
-//    Position first = pq.peek();
-//    System.out.println(first);
+//    Set<Position> hset = new HashSet<>();
+//    hset.add(aa);
+//    hset.add(cc);
+//    hset.add(bb);
+//
+//    Position[] arr = hset.toArray(new Position[0]);
+//    Arrays.sort(arr, Collections.reverseOrder());
+//    for (Position p : arr) {
+//      System.out.println(p);
+//    }
   }
 }

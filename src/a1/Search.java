@@ -47,7 +47,9 @@ public class Search {
     // get closest cheese by calculating Euclidean distance
     double distance = Double.MAX_VALUE;
     Position minCp = null;
-    for (Position cp : cheeses) {
+    Position[] cheeseArr = cheeses.toArray(new Position[0]);
+    Arrays.sort(cheeseArr, Collections.reverseOrder());
+    for (Position cp : cheeseArr) {
       double result = euclideanDistance(p, cp);
       if (result < distance) {
         distance = result;
