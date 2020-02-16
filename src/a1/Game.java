@@ -61,7 +61,8 @@ public class Game {
         Search ai = new Search(state, board);
         actionSeq = ai.BFS();
         if (actionSeq == null) {
-          Log.i("GAME", "Cat AI failed! MOUSE WIN!\n");
+          Log.i("GAME", "Cat AI failed!");
+          Log.i("GAME", "MOUSE WIN!");
           break;
         }
       }

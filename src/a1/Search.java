@@ -250,8 +250,8 @@ public class Search {
       }
     }
 
-    Log.i("BFS", "solution not found: " + nodeCount + " nodes searched");
     //run out of searchable nodes
+    Log.i("BFS", "solution not found: " + nodeCount + " nodes searched");
     return null;
   }
 
