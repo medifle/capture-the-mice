@@ -2,7 +2,7 @@ package a1;
 
 import java.util.*;
 
-public class Position{
+public class Position implements Comparable<Position>{
   private int x;
   private int y;
 
@@ -44,6 +44,11 @@ public class Position{
   }
 
   @Override
+  public int compareTo(Position p) {
+    return (x+y) - (p.getX() + p.getY());
+  }
+
+  @Override
   public String toString(){
     return x+","+y;
   }
@@ -52,5 +57,11 @@ public class Position{
 //    Position aa = new Position(1, 1);
 //    Position bb = new Position(3, 4);
 //    System.out.println(aa.equals(bb));
+//
+//    Queue<Position> pq = new PriorityQueue<>(Collections.reverseOrder());
+//    pq.add(aa);
+//    pq.add(bb);
+//    Position first = pq.peek();
+//    System.out.println(first);
   }
 }

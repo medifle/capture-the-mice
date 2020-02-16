@@ -54,20 +54,22 @@ public class Game {
      */
     while (gameRestart) {
 //      init(12, 1, 1, 3);
-      init(16, 3, 2, 6);
+//      init(16, 3, 2, 6);
 //      init(30, 4, 2, 10); // IDDFS showtime
-//      init(12, "7,1;-2,6;-9,1;9,6;6,10;");
-//      init(12, "6,9;-7,1;-5,8;10,2;0,10;");
-//      init(12, "11,0;-0,11;-11,1;10,3;"); // mouse win
+//      init(12, "7,1;-2,6;-9,1;9,6;6,10;"); // from a1 spec
+//      init(12, "7,1;-2,6;-7,3;9,1;9,6;6,10;"); // cheese tie
+      init(12, "7,2;-2,6;-6,3;6,1;8,3;8,1;9,6;6,10;"); // cheese tie: bottom-right test
+//      init(12, "6,9;-7,1;-5,8;10,2;0,10;"); // DFS fool
+//      init(12, "11,0;-0,11;-11,1;10,3;"); // Mouse win
 //      init(12, "1,5;0,9;1,11;-11,6;-6,5;10,9;0,8;10,5;9,6;");
 //      init(12, "1,5;0,9;1,11;-11,6;11,3;-6,5;10,9;0,8;10,5;9,6;");
 
       if (actionSeq.size() == 0) {
         Search ai = new Search(state, board);
-//        actionSeq = ai.BFS();
+        actionSeq = ai.BFS();
 //        actionSeq = ai.DFS();
-//        actionSeq = ai.DLS(5, false);
-        actionSeq = ai.IDDFS();
+//        actionSeq = ai.DLS(5, true);
+//        actionSeq = ai.IDDFS();
         if (actionSeq == null) {
           Log.i("GAME", "Cat AI failed!");
           Log.i("GAME", "MOUSE WIN!");

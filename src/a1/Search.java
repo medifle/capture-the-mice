@@ -67,6 +67,10 @@ public class Search {
    * 7 0 1
    * 6 M 2
    * 5 4 3
+   * todo:
+   * 7 6 5
+   * 4 M 3
+   * 2 1 0
    *
    * @param p mouse position
    * @param e cheese position
