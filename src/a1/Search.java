@@ -229,22 +229,26 @@ public class Search {
 
     Queue<Node> fringe = new LinkedList<>();
     Node r = new Node(state);
-    fringe.add(r);
-
     nodeCount += 1;
+
+    if (testGoal(r)) {
+      Log.i("BFS", "solution found: " + nodeCount + " nodes searched");
+      return genSolution(r);
+    }
+    fringe.add(r);
 
     while (!fringe.isEmpty()) {
       Node u = fringe.poll();
-      if (testGoal(u)) {
-        Log.d("BFS:GOAL", fringe.toString());
-        Log.i("BFS", "solution found: " + nodeCount + " nodes searched");
-        return genSolution(u);
-      }
-
       List<Node> children = expand(u);
       if (children != null) {
-        fringe.addAll(children);
         nodeCount += children.size();
+        for (Node d : children) {
+          if (testGoal(d)) {
+            Log.i("BFS", "solution found: " + nodeCount + " nodes searched");
+            return genSolution(d);
+          }
+        }
+        fringe.addAll(children);
       }
     }
 
