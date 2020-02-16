@@ -11,11 +11,17 @@ public class Search {
   private Board board;
 
   private int nodeCount;
+  private int mouseSpeed = 1;
 
   public Search(State state, Board board) {
     this.originState = state;
     this.state = state;
     this.board = board;
+  }
+
+  public Search(State state, Board board, int mouseSpeed) {
+    this(state, board);
+    this.mouseSpeed = mouseSpeed;
   }
 
   private boolean testGoal(Node u) {
@@ -60,7 +66,7 @@ public class Search {
       }
     }
     // calc mouse next position
-    Position rp = genMouseMove(p, minCp);
+    Position rp = genMouseMove(p, minCp, mouseSpeed);
 
     Log.d("calcMouseNextPos", "closest cheese " + minCp.toString() +
       "; current position: " + p + "; next position: " + rp);
@@ -69,37 +75,37 @@ public class Search {
   }
 
   /**
-   * 7 0 1
-   * 6 M 2
-   * 5 4 3
-   * todo:
    * 7 6 5
    * 4 M 3
    * 2 1 0
    *
    * @param p mouse position
    * @param e cheese position
+   * @param speed mouse step range per turn
    */
-  private Position genMouseMove(Position p, Position e) {
-    Position p0 = new Position(p.getX(), p.getY() - 1);
-    Position p1 = new Position(p.getX() + 1, p.getY() - 1);
-    Position p2 = new Position(p.getX() + 1, p.getY());
-    Position p3 = new Position(p.getX() + 1, p.getY() + 1);
-    Position p4 = new Position(p.getX(), p.getY() + 1);
-    Position p5 = new Position(p.getX() - 1, p.getY() + 1);
-    Position p6 = new Position(p.getX() - 1, p.getY());
-    Position p7 = new Position(p.getX() - 1, p.getY() - 1);
+  private Position genMouseMove(Position p, Position e, int speed) {
+    int range = speed * 2 + 1;
+    int[] xBase = new int[range];
+    int[] yBase = new int[range];
 
-    // store possible and valid next mouse positions
+    for (int i = 0, j = speed; i < xBase.length; ++i) {
+      xBase[i] = j;
+      j -= 1;
+    }
+    System.arraycopy(xBase, 0, yBase, 0, range);
+
     List<Position> positions = new ArrayList<>();
-    if (board.isValidPos(p0)) positions.add(p0);
-    if (board.isValidPos(p1)) positions.add(p1);
-    if (board.isValidPos(p2)) positions.add(p2);
-    if (board.isValidPos(p3)) positions.add(p3);
-    if (board.isValidPos(p4)) positions.add(p4);
-    if (board.isValidPos(p5)) positions.add(p5);
-    if (board.isValidPos(p6)) positions.add(p6);
-    if (board.isValidPos(p7)) positions.add(p7);
+    for (int y : yBase) {
+      for (int x : xBase) {
+        if (y != 0 || x != 0) {
+          Position tp = new Position(p.getX() + x, p.getY() + y);
+          // store possible and valid next mouse positions
+          if (board.isValidPos(tp)) {
+            positions.add(tp);
+          }
+        }
+      }
+    }
 
     if (positions.size() == 0) {
       Log.d("genMouseMove", "mouse runs out of space");

@@ -61,7 +61,7 @@ public class State {
   }
 
   /**
-   * randomly generate state with m mice, c cats, e cheeses given a n size board
+   * Constructor: randomly generate state with m mice, c cats, e cheeses given a n size board
    *
    * @param n board size (square shape only for now)
    * @param m number of mice
