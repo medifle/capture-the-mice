@@ -25,6 +25,7 @@ public class Game {
 
   /**
    * Randomly initialize a board
+   *
    * @param n board dimension (square)
    */
   public static void init(int n, int m, int c, int e) {
@@ -36,6 +37,7 @@ public class Game {
 
   /**
    * Load a board with a given state
+   *
    * @param n board dimension (square)
    * @param s state string representation
    */
@@ -51,9 +53,11 @@ public class Game {
      * Only support at most 2 cats!
      */
     while (gameRestart) {
-      init(12, 1, 1, 3);
-//      init(16, 3, 2, 6);
+//      init(12, 1, 1, 3);
+      init(16, 3, 2, 6);
+//      init(30, 4, 2, 10); // IDDFS showtime
 //      init(12, "7,1;-2,6;-9,1;9,6;6,10;");
+//      init(12, "6,9;-7,1;-5,8;10,2;0,10;");
 //      init(12, "11,0;-0,11;-11,1;10,3;"); // mouse win
 //      init(12, "1,5;0,9;1,11;-11,6;-6,5;10,9;0,8;10,5;9,6;");
 //      init(12, "1,5;0,9;1,11;-11,6;11,3;-6,5;10,9;0,8;10,5;9,6;");
@@ -61,7 +65,9 @@ public class Game {
       if (actionSeq.size() == 0) {
         Search ai = new Search(state, board);
 //        actionSeq = ai.BFS();
-        actionSeq = ai.DFS();
+//        actionSeq = ai.DFS();
+//        actionSeq = ai.DLS(5, false);
+        actionSeq = ai.IDDFS();
         if (actionSeq == null) {
           Log.i("GAME", "Cat AI failed!");
           Log.i("GAME", "MOUSE WIN!");
@@ -98,7 +104,7 @@ public class Game {
         // 1s interval
         try {
           Thread.sleep(1000);
-        } catch(InterruptedException ex) {
+        } catch (InterruptedException ex) {
           ex.printStackTrace();
         }
       }

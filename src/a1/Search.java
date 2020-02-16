@@ -5,11 +5,15 @@ import java.util.*;
 
 public class Search {
 
+  private State originState;
   private State state;
   private Set<String> stateSpace = new HashSet<>();
   private Board board;
 
+  private int nodeCount;
+
   public Search(State state, Board board) {
+    this.originState = state;
     this.state = state;
     this.board = board;
   }
@@ -257,6 +261,9 @@ public class Search {
     return null;
   }
 
+  /**
+   * Iterative version of Depth-first Search using Stack
+   */
   public Queue<State> DFS() {
     int nodeCount = 0;
 
@@ -291,7 +298,81 @@ public class Search {
     return null;
   }
 
-  public static void main(String[] args) {
+  /**
+   * Iterative version of Depth-limited Search
+   *
+   * @param depth start from 0 at root
+   */
+  public Queue<State> DLS(int depth, boolean clearNodeCount) {
+    stateSpace.clear();
 
+    Stack<Node> fringe = new Stack<>();
+    Node r = new Node(originState);
+
+    if (clearNodeCount) {
+      nodeCount = 0;
+    }
+    nodeCount += 1;
+
+    if (testGoal(r)) {
+      Log.i("DLS", "solution found: depth " + depth
+        + "  " + nodeCount + " nodes searched");
+      return genSolution(r);
+    }
+    if (r.depth < depth) {
+      fringe.push(r);
+    }
+
+    while (!fringe.empty()) {
+      Node u = fringe.pop();
+      List<Node> children = expand(u);
+      if (children != null) {
+        nodeCount += children.size();
+        for (Node d : children) {
+          if (testGoal(d)) {
+            Log.i("DLS", "solution found: depth " + depth
+              + "  " + nodeCount + " nodes searched");
+            return genSolution(d);
+          }
+        }
+
+        // Children are all at the same depth, so we pick one to check the depth
+        // (children size must > 0 at this line)
+        // If children depth is the same as depth arg, we discard them as we already called testGoal()
+        // for each of them. So they do not need to be put in the Stack
+        if (children.get(0).depth < depth) {
+          Collections.reverse(children); // optional
+          fringe.addAll(children);
+        }
+      }
+    }
+
+    //run out of searchable nodes
+    Log.i("DLS", "solution not found: depth " + depth
+      + "  " + nodeCount + " nodes searched");
+    return null;
   }
+
+  /**
+   * Iterative deepening depth-first search
+   */
+  public Queue<State> IDDFS() {
+    nodeCount = 0;
+    Log.i("IDDFS", "Start searching...");
+
+    for (int i = 0; i < Integer.MAX_VALUE; ++i) {
+      Queue<State> result = DLS(i, false);
+      if (result != null) {
+        return result;
+      }
+    }
+
+    //run out of searchable nodes
+    Log.i("IDDFS", "solution not found: " + nodeCount + " nodes searched");
+    return null;
+  }
+
+//  public static void main(String[] args) {
+//
+//  }
 }

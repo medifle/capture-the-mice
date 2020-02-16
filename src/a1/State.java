@@ -10,9 +10,11 @@ public class State {
   public List<Position> getMice() {
     return mice;
   }
+
   public List<Position> getCats() {
     return cats;
   } // support for at most 2 cats
+
   public Set<Position> getCheeses() {
     return cheeses;
   }
@@ -20,6 +22,7 @@ public class State {
   public void removeMouse(Position p) {
     mice.remove(p);
   }
+
   public void removeCheese(Position p) {
     cheeses.remove(p);
   }
@@ -27,6 +30,7 @@ public class State {
   public boolean isCatEnd() {
     return mice.isEmpty();
   }
+
   public boolean isMouseEnd() {
     return !mice.isEmpty() && cheeses.isEmpty();
   }
@@ -58,6 +62,7 @@ public class State {
 
   /**
    * randomly generate state with m mice, c cats, e cheeses given a n size board
+   *
    * @param n board size (square shape only for now)
    * @param m number of mice
    * @param c number of cats, at most 2
@@ -82,9 +87,9 @@ public class State {
       int x = rand.nextInt(cols);
       int y = rand.nextInt(rows);
 
-      if (board.isEmptyAt(x,y)) {
+      if (board.isEmptyAt(x, y)) {
         board.set(x, y, 1);
-        collection.add(new Position(x,y));
+        collection.add(new Position(x, y));
         count += 1;
       }
     }
