@@ -79,8 +79,8 @@ public class Search {
    * 4 M 3
    * 2 1 0
    *
-   * @param p mouse position
-   * @param e cheese position
+   * @param p     mouse position
+   * @param e     cheese position
    * @param speed mouse step range per turn
    */
   private Position genMouseMove(Position p, Position e, int speed) {
@@ -212,12 +212,12 @@ public class Search {
     return expandedNodes;
   }
 
-  /**
-   * 7    0
+  /*
+   *   7    0
    * 6        1
-   * C
+   *     C
    * 5        2
-   * 4    3
+   *   4    3
    */
   private List<Position> forkCatPos(Position p) {
     Position p0 = new Position(p.getX() + 1, p.getY() - 2);
@@ -386,6 +386,13 @@ public class Search {
     Log.i("IDDFS", "solution not found: " + nodeCount + " nodes searched");
     return null;
   }
+
+  /**
+   * A* Search
+   */
+//  public Queue<State> Astar() {
+//
+//  }
 
 //  public static void main(String[] args) {
 //
