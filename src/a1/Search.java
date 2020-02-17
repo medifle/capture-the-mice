@@ -94,7 +94,7 @@ public class Search {
     }
     System.arraycopy(xBase, 0, yBase, 0, range);
 
-    List<Position> positions = new ArrayList<>();
+    List<Position> positions = new LinkedList<>();
     for (int y : yBase) {
       for (int x : xBase) {
         if (y != 0 || x != 0) {
@@ -150,7 +150,7 @@ public class Search {
     Set<Position> cheeses = new HashSet<>(uCheeses);
 
     // generate new mouse positions
-    List<Position> mice = new ArrayList<>();
+    List<Position> mice = new LinkedList<>();
     for (Position p : uMice) {
       Position nextPos = calcMouseNextPos(p, cheeses);
       if (nextPos != null) {
@@ -170,7 +170,7 @@ public class Search {
     if (nextCatsList != null) {
       for (List<Position> nextCats : nextCatsList) {
         // we need a new Set reference but storing the same mice positions which are read only
-        List<Position> nextMice = new ArrayList<>(mice);
+        List<Position> nextMice = new LinkedList<>(mice);
         // similar to nextMice
         Set<Position> nextCheeses = new HashSet<>(cheeses);
 

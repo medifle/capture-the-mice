@@ -90,8 +90,8 @@ public class Board {
     String[] cArr = c.split(";");
     String[] eArr = e.split(";");
 
-    List<Position> mice = new ArrayList<>();;
-    List<Position> cats = new ArrayList<>();
+    List<Position> mice = new LinkedList<>();;
+    List<Position> cats = new LinkedList<>();
     Set<Position> cheeses = new HashSet<>();
     for (String ms : mArr) {
       Position mp = new Position(ms);

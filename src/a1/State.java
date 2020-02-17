@@ -3,8 +3,8 @@ package a1;
 import java.util.*;
 
 public class State {
-  private List<Position> mice = new ArrayList<>();
-  private List<Position> cats = new ArrayList<>();
+  private List<Position> mice = new LinkedList<>();
+  private List<Position> cats = new LinkedList<>();
   private Set<Position> cheeses = new HashSet<>();
 
   public List<Position> getMice() {
@@ -116,12 +116,12 @@ public class State {
 
   public static void main(String[] args) {
 
-//    List<Position> mc = new ArrayList<>();
+//    List<Position> mc = new LinkedList<>();
 //    Position p1 = new Position(1, 1);
 //    mc.add(p1);
 //    mc.add(new Position(2, 0));
 //
-//    List<Position> mc2 = new ArrayList<>(mc);
+//    List<Position> mc2 = new LinkedList<>(mc);
 //    System.out.println(mc2 == mc);
 //    mc2.remove(p1);
 //    System.out.println(mc);
