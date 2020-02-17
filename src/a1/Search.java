@@ -145,7 +145,6 @@ public class Search {
     List<Position> uMice = u.state.getMice();
     List<Position> uCats = u.state.getCats();
     Set<Position> uCheeses = u.state.getCheeses();
-    List<Node> expandedNodes = new LinkedList<>();
 
     // get a new cheeses Set reference but storing the same cheese Positions
     Set<Position> cheeses = new HashSet<>(uCheeses);
@@ -163,16 +162,13 @@ public class Search {
       }
     }
 
-    /**
-     * branching happens, 8 for 1 cat, 8*8 for 2 cats
-     */
-    if (uCats.size() == 1) {
-      Position up = uCats.get(0);
-      List<Position> fCats = forkCatPos(up);
-      for (Position fp : fCats) {
-        List<Position> nextCats = new ArrayList<>();
-        nextCats.add(fp);
+    // branching happens, 8 for 1 cat, 8*8 for 2 cats...
+    List<List<Position>> nextCatsList = calcCatsNextPos(uCats);
 
+    List<Node> expandedNodes = new LinkedList<>();
+    // generate state, then node
+    if (nextCatsList != null) {
+      for (List<Position> nextCats : nextCatsList) {
         // we need a new Set reference but storing the same mice positions which are read only
         List<Position> nextMice = new ArrayList<>(mice);
         // similar to nextMice
@@ -182,27 +178,6 @@ public class Search {
         Node node = new Node(state, u);
         expandedNodes.add(node);
       }
-    } else if (uCats.size() == 2) {
-      Position up0 = uCats.get(0);
-      Position up1 = uCats.get(1);
-      List<Position> fCats0 = forkCatPos(up0);
-      List<Position> fCats1 = forkCatPos(up1);
-      for (Position fp0 : fCats0) {
-        for (Position fp1 : fCats1) {
-          List<Position> nextCats = new ArrayList<>();
-          nextCats.add(fp0);
-          nextCats.add(fp1);
-
-          // we need a new Set reference but storing the same mice positions which are read only
-          List<Position> nextMice = new ArrayList<>(mice);
-          // similar to nextMice
-          Set<Position> nextCheeses = new HashSet<>(cheeses);
-
-          State state = new State(nextMice, nextCats, nextCheeses);
-          Node node = new Node(state, u);
-          expandedNodes.add(node);
-        }
-      }
     }
 
     if (expandedNodes.size() == 0) {
@@ -210,6 +185,59 @@ public class Search {
       return null;
     }
     return expandedNodes;
+  }
+
+  private List<List<Position>> calcCatsNextPos(List<Position> uCats) {
+    Queue<List<Position>> forkCatsList = new LinkedList<>();
+    for (Position up : uCats) {
+      List<Position> fCats = forkCatPos(up);
+      if (fCats != null) {
+        forkCatsList.add(fCats);
+      }
+    }
+
+    return hydrateCats(forkCatsList);
+  }
+
+  /**
+   * Recursively generate a hydrated list of nextCats
+   * @param forkCatsList a list containing all cats next possible positions
+   * @return a hydrated list a nextCats
+   */
+  private List<List<Position>> hydrateCats(Queue<List<Position>> forkCatsList) {
+
+    List<List<Position>> hydratedCats = new LinkedList<>();
+
+    if (forkCatsList.isEmpty()) {
+      return null;
+    }
+
+    // base case
+    if (forkCatsList.size() == 1) {
+      List<Position> fCats = forkCatsList.peek();
+      for (Position fp : fCats) {
+        List<Position> nextCats = new LinkedList<>();
+        nextCats.add(fp);
+        hydratedCats.add(nextCats);
+      }
+      return hydratedCats;
+    }
+
+    // divide and conquer
+    List<Position> unHydratedCats = forkCatsList.poll();
+    List<List<Position>> restHydratedCats = hydrateCats(forkCatsList);
+
+    // combine
+    for (Position uhp : unHydratedCats) {
+      assert restHydratedCats != null;
+      for (List<Position> baseNextCats : restHydratedCats) {
+        List<Position> nextCats = new LinkedList<>(baseNextCats);
+        nextCats.add(uhp);
+        hydratedCats.add(nextCats);
+      }
+    }
+
+    return hydratedCats;
   }
 
   /*
@@ -230,7 +258,7 @@ public class Search {
     Position p7 = new Position(p.getX() - 1, p.getY() - 2);
 
     // branching for one cat position is at most 8
-    List<Position> positions = new ArrayList<>();
+    List<Position> positions = new LinkedList<>();
     if (board.isValidPos(p0)) positions.add(p0);
     if (board.isValidPos(p1)) positions.add(p1);
     if (board.isValidPos(p2)) positions.add(p2);
@@ -239,6 +267,10 @@ public class Search {
     if (board.isValidPos(p5)) positions.add(p5);
     if (board.isValidPos(p6)) positions.add(p6);
     if (board.isValidPos(p7)) positions.add(p7);
+
+    if (positions.size() == 0) {
+      return null;
+    }
 
     return positions;
   }

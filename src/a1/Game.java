@@ -49,11 +49,9 @@ public class Game {
   }
 
   public static void main(String[] args) {
-    /**
-     * Only support at most 2 cats!
-     */
     while (gameRestart) {
 //      init(12, 1, 1, 3);
+      init(12, 3, 3, 6);
 //      init(30, 1, 1, 3);
 //      init(16, 3, 2, 6);
 //      init(30, 4, 2, 10); // IDDFS showtime
@@ -64,14 +62,15 @@ public class Game {
 //      init(12, "11,0;-0,11;-11,1;10,3;"); // Mouse win
 //      init(12, "1,5;0,9;1,11;-11,6;-6,5;10,9;0,8;10,5;9,6;");
 //      init(12, "1,5;0,9;1,11;-11,6;11,3;-6,5;10,9;0,8;10,5;9,6;");
-      init(30, "12,24;-25,20;-23,11;12,16;9,0;");
+//      init(30, "12,24;-25,20;-23,11;12,16;9,0;");
 
       if (actionSeq.size() == 0) {
-        Search ai = new Search(state, board, 2);
+        Search ai = new Search(state, board, 1);
 //        actionSeq = ai.BFS();
 //        actionSeq = ai.DFS();
 //        actionSeq = ai.DLS(8, true);
         actionSeq = ai.IDDFS();
+//        actionSeq = ai.Astar();
 
         if (actionSeq == null) {
           Log.i("GAME", "Cat AI failed!");

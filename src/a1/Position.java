@@ -55,6 +55,7 @@ public class Position implements Comparable<Position>{
 
   public static void main(String[] args) {
 //    Position aa = new Position(1, 1);
+//    Position dd = new Position(1, 1);
 //    Position bb = new Position(3, 4);
 //    Position cc = new Position(7, 4);
 //    System.out.println(aa.equals(bb));
