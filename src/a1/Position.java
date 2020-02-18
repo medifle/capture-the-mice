@@ -26,18 +26,23 @@ public class Position implements Comparable<Position>{
 //    this.y = y;
 //  }
 
+
+  /**
+   * Auto generated equals
+   */
   @Override
   public boolean equals(Object o) {
-    if (o == this) {
-      return true;
-    }
-    if (!(o instanceof Position)) {
-      return false;
-    }
-    Position p = (Position) o;
-    return x == p.x && y == p.y;
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Position position = (Position) o;
+    return x == position.x &&
+      y == position.y;
   }
 
+  /**
+   * Auto generated hashCode
+   * Make sure HashSet, HashMap works for Position
+   */
   @Override
   public int hashCode() {
     return Objects.hash(x, y);
@@ -58,12 +63,12 @@ public class Position implements Comparable<Position>{
 //    Position dd = new Position(1, 1);
 //    Position bb = new Position(3, 4);
 //    Position cc = new Position(7, 4);
-//    System.out.println(aa.equals(bb));
+//    System.out.println(aa.equals(dd));
 //
 //    Set<Position> hset = new HashSet<>();
 //    hset.add(aa);
 //    hset.add(cc);
-//    hset.add(bb);
+//    hset.add(dd);
 //
 //    Position[] arr = hset.toArray(new Position[0]);
 //    Arrays.sort(arr, Collections.reverseOrder());

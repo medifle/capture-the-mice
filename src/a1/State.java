@@ -95,6 +95,29 @@ public class State {
     }
   }
 
+  /**
+   * Auto generated equals
+   */
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    State state = (State) o;
+    return mice.equals(state.mice) &&
+      cats.equals(state.cats) &&
+      cheeses.equals(state.cheeses);
+  }
+
+  /**
+   * Auto generated hashCode
+   * Make sure HashSet, HashMap works for State
+   * @return
+   */
+  @Override
+  public int hashCode() {
+    return Objects.hash(mice, cats, cheeses);
+  }
+
   // e.g. 1,2;-4,3;-1,4;2,5;3,4;
   //       M    C        E
   public String toString() {
@@ -115,15 +138,42 @@ public class State {
   }
 
   public static void main(String[] args) {
-
+    /* Test State equals and hashCode */
 //    List<Position> mc = new LinkedList<>();
 //    Position p1 = new Position(1, 1);
 //    mc.add(p1);
 //    mc.add(new Position(2, 0));
 //
+//    List<Position> ct = new LinkedList<>();
+//    ct.add(new Position(3, 3));
+//    ct.add(new Position(3, 3));
+//    ct.add(new Position(5, 4));
+//
+//    Set<Position> es = new HashSet<>();
+//    es.add(new Position(7, 1));
+//    es.add(new Position(6, 3));
+//
+//    State state = new State(mc, ct, es);
+//    State state2 = new State(mc, ct, es);
+//    System.out.println(state.equals(state2));
+//
+//    Set<State> hset = new HashSet<>();
+//    hset.add(state);
+//    hset.add(state2);
+//
+//    State[] arr = hset.toArray(new State[0]);
+//    for (State p : arr) {
+//      System.out.println(p);
+//    }
+
+
+    /* Test List equals */
 //    List<Position> mc2 = new LinkedList<>(mc);
 //    System.out.println(mc2 == mc);
+//    System.out.println(mc2.equals(mc));
 //    mc2.remove(p1);
+//    System.out.println("remove p1");
+//    System.out.println(mc2.equals(mc));
 //    System.out.println(mc);
 //    System.out.println(mc2);
   }

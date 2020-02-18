@@ -52,7 +52,7 @@ public class Game {
     while (gameRestart) {
 //      init(12, 1, 1, 3);
 //      init(8, 3, 5, 6);
-//      init(30, 1, 1, 3);
+//      init(20, 1, 1, 3);
 //      init(16, 3, 2, 6);
 //      init(30, 4, 2, 10); // IDDFS showtime
       init(12, "7,1;-2,6;-9,1;9,6;6,10;"); // from a1 spec
@@ -69,8 +69,8 @@ public class Game {
 
       if (actionSeq.size() == 0) {
         Search ai = new Search(state, board, 1);
-//        actionSeq = ai.BFS();
-        actionSeq = ai.DFS();
+        actionSeq = ai.BFS();
+//        actionSeq = ai.DFS();
 //        actionSeq = ai.DLS(5, true);
 //        actionSeq = ai.IDDFS();
 //        actionSeq = ai.AStar();

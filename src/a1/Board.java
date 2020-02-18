@@ -144,10 +144,10 @@ public class Board {
 
   public static void main(String[] args) {
 
-    Board board = new Board(12);
+//    Board board = new Board(12);
 //    board.loadState("7,1;-2,6;-9,1;9,6;6,10;");
-    board.loadState("7,1;-2,6;-6,10;9,1;9,6;");
-    System.out.println(board.toString());
+//    board.loadState("7,1;-2,6;-6,10;9,1;9,6;");
+//    System.out.println(board.toString());
 
     //    Board board = new Board(12);
     //    board.initRandomState();
