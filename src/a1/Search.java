@@ -11,6 +11,7 @@ public class Search {
   private Board board;
 
   private int nodeCount;
+  private int hitCount;
   private int mouseSpeed = 1;
 
   public Search(State state, Board board) {
@@ -132,6 +133,7 @@ public class Search {
         Log.d("EXPAND", "calcMouseNextPos is null" + u.toString());
       }
     }
+    Collections.sort(mice);
 
     // branching happens, 8 for 1 cat, 8*8 for 2 cats...
     List<List<Position>> nextCatsList = calcCatsNextPos(uCats);
@@ -145,6 +147,10 @@ public class Search {
         // similar to nextMice
         Set<Position> nextCheeses = new HashSet<>(cheeses);
 
+        // sort cats to ensure state check is working
+        // e.g. cats[(2,1),(1,2)] and cats[(1,2),(2,1)] should be considered as the same if
+        // cheeses and mice positions are the same.
+        Collections.sort(nextCats);
         State state = new State(nextMice, nextCats, nextCheeses);
         Node node = new Node(state, u);
         expandedNodes.add(node);
@@ -273,6 +279,7 @@ public class Search {
       return false;
     }
     if (stateSpace.contains(u.state.toString())) {
+      hitCount += 1;
       Log.d(logTag, "state hit. " + u.state.toString());
       return false;
     }
@@ -304,6 +311,7 @@ public class Search {
         for (Node child : children) {
           if (testGoal(child)) {
             Log.i("BFS", "solution found: " + nodeCount + " nodes searched");
+            Log.i("BFS", "hitCount: " + hitCount);
             return genSolution(child);
           }
           if (isValidNewState(child, "BFS")) {
@@ -347,6 +355,7 @@ public class Search {
         for (Node child : children) {
           if (testGoal(child)) {
             Log.i("DFS", "solution found: " + nodeCount + " nodes searched");
+            Log.i("DFS", "hitCount: " + hitCount);
             return genSolution(child);
           }
           if (isValidNewState(child, "DFS")) {
@@ -403,6 +412,7 @@ public class Search {
           if (testGoal(child)) {
             Log.i("DLS", "solution found: depth " + depth
               + "  " + nodeCount + " nodes searched");
+            Log.i("DLS", "hitCount: " + hitCount);
             return genSolution(child);
           }
           if (isValidNewState(child, "DLS")) {
