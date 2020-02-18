@@ -13,7 +13,7 @@ public class State {
 
   public List<Position> getCats() {
     return cats;
-  } // support for at most 2 cats
+  }
 
   public Set<Position> getCheeses() {
     return cheeses;
