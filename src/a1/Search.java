@@ -7,7 +7,7 @@ public class Search {
 
   private State originState;
   private State state;
-  private Set<String> stateSpace = new HashSet<>();
+  private Set<State> stateSpace = new HashSet<>();
   private Board board;
 
   private int nodeCount;
@@ -278,7 +278,7 @@ public class Search {
       Log.d(logTag, "Mouse end. " + u.state.toString());
       return false;
     }
-    if (stateSpace.contains(u.state.toString())) {
+    if (stateSpace.contains(u.state)) {
       hitCount += 1;
       Log.d(logTag, "state hit. " + u.state.toString());
       return false;
@@ -299,7 +299,7 @@ public class Search {
     }
     if (isValidNewState(r, "BFS")) {
       // add to stateSpace to avoid cycle
-      stateSpace.add(r.state.toString());
+      stateSpace.add(r.state);
       fringe.add(r);
     }
 
@@ -315,7 +315,7 @@ public class Search {
             return genSolution(child);
           }
           if (isValidNewState(child, "BFS")) {
-            stateSpace.add(child.state.toString());
+            stateSpace.add(child.state);
             fringe.add(child);
           }
         }
@@ -342,7 +342,7 @@ public class Search {
       return genSolution(r);
     }
     if (isValidNewState(r, "DFS")) {
-      stateSpace.add(r.state.toString());
+      stateSpace.add(r.state);
       fringe.push(r);
     }
 
@@ -359,7 +359,7 @@ public class Search {
             return genSolution(child);
           }
           if (isValidNewState(child, "DFS")) {
-            stateSpace.add(child.state.toString());
+            stateSpace.add(child.state);
             fringe.push(child);
           }
         }
@@ -393,7 +393,7 @@ public class Search {
       return genSolution(r);
     }
     if (isValidNewState(r, "DLS")) {
-      stateSpace.add(r.state.toString());
+      stateSpace.add(r.state);
       if (r.depth < depth) {
         fringe.push(r);
       }
@@ -416,7 +416,7 @@ public class Search {
             return genSolution(child);
           }
           if (isValidNewState(child, "DLS")) {
-            stateSpace.add(child.state.toString());
+            stateSpace.add(child.state);
             // If child depth is the same as depth arg, discard it. No need to expand it(put to fringe)
             if (childDepth < depth) {
               fringe.push(child);

@@ -53,9 +53,9 @@ public class Game {
 //      init(12, 1, 1, 3);
 //      init(8, 3, 5, 6);
 //      init(20, 1, 1, 3);
-//      init(16, 3, 2, 6);
+//      init(20, 4, 2, 8);
 //      init(30, 4, 2, 10); // IDDFS showtime
-      init(12, "7,1;-2,6;-9,1;9,6;6,10;"); // from a1 spec
+//      init(12, "7,1;-2,6;-9,1;9,6;6,10;"); // from a1 spec
 //      init(12, "7,1;-2,6;-7,3;9,1;9,6;6,10;"); // cheese tie
 //      init(12, "7,2;-2,6;-6,3;6,1;8,3;8,1;9,6;6,10;"); // cheese tie: bottom-right test
 //      init(12, "6,9;-7,1;-5,8;10,2;0,10;"); // DFS fool
@@ -66,6 +66,9 @@ public class Game {
 //      init(12, "1,5;3,5;-11,6;11,6;-6,5;10,9;0,8;10,5;9,6;"); // BFS: big difference if cats sorted
 //      init(12, "6,4;-11,5;-3,10;2,7;8,9;1,0;"); // DFS test
 //      init(12, "6,3;-0,4;-0,10;0,0;2,0;3,9;"); // DFS test2
+
+      // BFS test: storing State is more memory efficient than storing String
+      init(20, "7,4;5,11;10,19;7,9;-8,11;19,13;-10,9;4,4;2,2;16,0;10,14;8,3;8,4;17,14;");
 
       if (actionSeq.size() == 0) {
         Search ai = new Search(state, board, 1);
