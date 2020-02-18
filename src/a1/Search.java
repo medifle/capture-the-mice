@@ -24,22 +24,6 @@ public class Search {
     this.mouseSpeed = mouseSpeed;
   }
 
-  private boolean testGoal(Node u) {
-    return u.state.isCatEnd();
-  }
-
-  private Queue<State> genSolution(Node u) {
-    LinkedList<State> q = new LinkedList<>();
-
-    while (u != null) {
-      q.push(u.state);
-      Log.i("genSolution", "depth " + u.depth + "  " + u.state.toString());
-      u = u.parent;
-    }
-
-    return q;
-  }
-
   private double euclideanDistance(Position p1, Position p2) {
     return Point2D.distance(p1.getX(), p1.getY(), p2.getX(), p2.getY());
   }
@@ -127,20 +111,7 @@ public class Search {
   }
 
   private List<Node> expand(Node u) {
-    if (u.state.isMouseEnd()) {
-      Log.d("EXPAND", "mouse end. " + u.state.toString());
-      return null;
-    }
-
     Log.d("EXPAND", "u depth " + u.depth + "  " + u.state.toString());
-
-    if (stateSpace.contains(u.state.toString())) {
-      Log.d("EXPAND", "state hit. " + u.state.toString());
-      return null;
-    }
-
-    // add to stateSpace to avoid cycle
-    stateSpace.add(u.state.toString());
 
     List<Position> uMice = u.state.getMice();
     List<Position> uCats = u.state.getCats();
@@ -201,6 +172,7 @@ public class Search {
 
   /**
    * Recursively generate a hydrated list of nextCats
+   *
    * @param forkCatsList a list containing all cats next possible positions
    * @return a hydrated list a nextCats
    */
@@ -275,6 +247,38 @@ public class Search {
     return positions;
   }
 
+  private Queue<State> genSolution(Node u) {
+    LinkedList<State> q = new LinkedList<>();
+
+    while (u != null) {
+      q.push(u.state);
+      Log.i("genSolution", "depth " + u.depth + "  " + u.state.toString());
+      u = u.parent;
+    }
+
+    return q;
+  }
+
+  private boolean testGoal(Node u) {
+    return u.state.isCatEnd();
+  }
+
+  /**
+   * valid: not Mouse End
+   * new: not in state space
+   */
+  private boolean isValidNewState(Node u, String logTag) {
+    if (u.state.isMouseEnd()) {
+      Log.d(logTag, "Mouse end. " + u.state.toString());
+      return false;
+    }
+    if (stateSpace.contains(u.state.toString())) {
+      Log.d(logTag, "state hit. " + u.state.toString());
+      return false;
+    }
+    return true;
+  }
+
   public Queue<State> BFS() {
     int nodeCount = 0;
 
@@ -286,24 +290,31 @@ public class Search {
       Log.i("BFS", "solution found: " + nodeCount + " nodes searched");
       return genSolution(r);
     }
-    fringe.add(r);
+    if (isValidNewState(r, "BFS")) {
+      // add to stateSpace to avoid cycle
+      stateSpace.add(r.state.toString());
+      fringe.add(r);
+    }
 
     while (!fringe.isEmpty()) {
       Node u = fringe.poll();
       List<Node> children = expand(u);
       if (children != null) {
         nodeCount += children.size();
-        for (Node d : children) {
-          if (testGoal(d)) {
+        for (Node child : children) {
+          if (testGoal(child)) {
             Log.i("BFS", "solution found: " + nodeCount + " nodes searched");
-            return genSolution(d);
+            return genSolution(child);
+          }
+          if (isValidNewState(child, "BFS")) {
+            stateSpace.add(child.state.toString());
+            fringe.add(child);
           }
         }
-        fringe.addAll(children);
       }
     }
 
-    //run out of searchable nodes
+    // run out of searchable nodes
     Log.i("BFS", "solution not found: " + nodeCount + " nodes searched");
     return null;
   }
@@ -322,25 +333,31 @@ public class Search {
       Log.i("DFS", "solution found: " + nodeCount + " nodes searched");
       return genSolution(r);
     }
-    fringe.push(r);
+    if (isValidNewState(r, "DFS")) {
+      stateSpace.add(r.state.toString());
+      fringe.push(r);
+    }
 
     while (!fringe.empty()) {
       Node u = fringe.pop();
       List<Node> children = expand(u);
       if (children != null) {
         nodeCount += children.size();
-        for (Node d : children) {
-          if (testGoal(d)) {
+        Collections.reverse(children); // optional
+        for (Node child : children) {
+          if (testGoal(child)) {
             Log.i("DFS", "solution found: " + nodeCount + " nodes searched");
-            return genSolution(d);
+            return genSolution(child);
+          }
+          if (isValidNewState(child, "DFS")) {
+            stateSpace.add(child.state.toString());
+            fringe.push(child);
           }
         }
-        Collections.reverse(children); // optional
-        fringe.addAll(children);
       }
     }
 
-    //run out of searchable nodes
+    // run out of searchable nodes
     Log.i("DFS", "solution not found: " + nodeCount + " nodes searched");
     return null;
   }
@@ -366,8 +383,11 @@ public class Search {
         + "  " + nodeCount + " nodes searched");
       return genSolution(r);
     }
-    if (r.depth < depth) {
-      fringe.push(r);
+    if (isValidNewState(r, "DLS")) {
+      stateSpace.add(r.state.toString());
+      if (r.depth < depth) {
+        fringe.push(r);
+      }
     }
 
     while (!fringe.empty()) {
@@ -375,26 +395,28 @@ public class Search {
       List<Node> children = expand(u);
       if (children != null) {
         nodeCount += children.size();
-        for (Node d : children) {
-          if (testGoal(d)) {
-            Log.i("DLS", "solution found: depth " + depth
-              + "  " + nodeCount + " nodes searched");
-            return genSolution(d);
-          }
-        }
-
+        Collections.reverse(children); // optional
         // Children are all at the same depth, so we pick one to check the depth
         // (children size must > 0 at this line)
-        // If children depth is the same as depth arg, we discard them as we already called testGoal()
-        // for each of them. So they do not need to be put in the Stack
-        if (children.get(0).depth < depth) {
-          Collections.reverse(children); // optional
-          fringe.addAll(children);
+        int childDepth = children.get(0).depth;
+        for (Node child : children) {
+          if (testGoal(child)) {
+            Log.i("DLS", "solution found: depth " + depth
+              + "  " + nodeCount + " nodes searched");
+            return genSolution(child);
+          }
+          if (isValidNewState(child, "DLS")) {
+            stateSpace.add(child.state.toString());
+            // If child depth is the same as depth arg, discard it. No need to expand it(put to fringe)
+            if (childDepth < depth) {
+              fringe.push(child);
+            }
+          }
         }
       }
     }
 
-    //run out of searchable nodes
+    // run out of searchable nodes
     Log.i("DLS", "solution not found: depth " + depth
       + "  " + nodeCount + " nodes searched");
     return null;
@@ -414,7 +436,7 @@ public class Search {
       }
     }
 
-    //run out of searchable nodes
+    // run out of searchable nodes
     Log.i("IDDFS", "solution not found: " + nodeCount + " nodes searched");
     return null;
   }
