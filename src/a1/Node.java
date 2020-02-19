@@ -1,9 +1,13 @@
 package a1;
 
+import java.util.List;
+
 public class Node {
   State state;
   Node parent;
   int depth;
+  int h;
+  List<Node> children;
 
   public Node(State state) {
     this.state = state;

@@ -79,7 +79,7 @@ public class Search {
     }
     System.arraycopy(xBase, 0, yBase, 0, range);
 
-    List<Position> positions = new LinkedList<>();
+    List<Position> positions = new ArrayList<>();
     for (int y : yBase) {
       for (int x : xBase) {
         if (y != 0 || x != 0) {
@@ -122,7 +122,7 @@ public class Search {
     Set<Position> cheeses = new HashSet<>(uCheeses);
 
     // generate new mouse positions
-    List<Position> mice = new LinkedList<>();
+    List<Position> mice = new ArrayList<>();
     for (Position p : uMice) {
       Position nextPos = calcMouseNextPos(p, cheeses);
       if (nextPos != null) {
@@ -138,12 +138,12 @@ public class Search {
     // branching happens, 8 for 1 cat, 8*8 for 2 cats...
     List<List<Position>> nextCatsList = calcCatsNextPos(uCats);
 
-    List<Node> expandedNodes = new LinkedList<>();
+    List<Node> expandedNodes = new ArrayList<>();
     // generate state, then node
     if (nextCatsList != null) {
       for (List<Position> nextCats : nextCatsList) {
         // we need a new Set reference but storing the same mice positions which are read only
-        List<Position> nextMice = new LinkedList<>(mice);
+        List<Position> nextMice = new ArrayList<>(mice);
         // similar to nextMice
         Set<Position> nextCheeses = new HashSet<>(cheeses);
 
@@ -184,7 +184,7 @@ public class Search {
    */
   private List<List<Position>> hydrateCats(Queue<List<Position>> forkCatsList) {
 
-    List<List<Position>> hydratedCats = new LinkedList<>();
+    List<List<Position>> hydratedCats = new ArrayList<>();
 
     if (forkCatsList.isEmpty()) {
       return null;
@@ -194,7 +194,7 @@ public class Search {
     if (forkCatsList.size() == 1) {
       List<Position> fCats = forkCatsList.peek();
       for (Position fp : fCats) {
-        List<Position> nextCats = new LinkedList<>();
+        List<Position> nextCats = new ArrayList<>();
         nextCats.add(fp);
         hydratedCats.add(nextCats);
       }
@@ -209,7 +209,7 @@ public class Search {
     for (Position uhp : unHydratedCats) {
       assert restHydratedCats != null;
       for (List<Position> baseNextCats : restHydratedCats) {
-        List<Position> nextCats = new LinkedList<>(baseNextCats);
+        List<Position> nextCats = new ArrayList<>(baseNextCats);
         nextCats.add(uhp);
         hydratedCats.add(nextCats);
       }
@@ -236,7 +236,7 @@ public class Search {
     Position p7 = new Position(p.getX() - 1, p.getY() - 2);
 
     // branching for one cat position is at most 8
-    List<Position> positions = new LinkedList<>();
+    List<Position> positions = new ArrayList<>();
     if (board.isValidPos(p0)) positions.add(p0);
     if (board.isValidPos(p1)) positions.add(p1);
     if (board.isValidPos(p2)) positions.add(p2);
@@ -271,16 +271,38 @@ public class Search {
 
   /**
    * valid: not Mouse End
-   * new: not in state space
    */
-  private boolean isValidNewState(Node u, String logTag) {
-    if (u.state.isMouseEnd()) {
-      Log.d(logTag, "Mouse end. " + u.state.toString());
+  private boolean isValidState(State state, String logTag) {
+    if (state.isMouseEnd()) {
+      Log.d(logTag, "Mouse end. " + state.toString());
       return false;
     }
-    if (stateSpace.contains(u.state)) {
+    return true;
+  }
+
+  /**
+   * new: not in state space
+   */
+  private boolean isNewSetState(State state, String logTag) {
+    if (stateSpace.contains(state)) {
       hitCount += 1;
-      Log.d(logTag, "state hit. " + u.state.toString());
+      Log.d(logTag, "state hit. " + state.toString());
+      return false;
+    }
+    return true;
+  }
+
+  private boolean isValidNewSetState(State state, String logTag) {
+    return isValidState(state, logTag) && isNewSetState(state, logTag);
+  }
+
+  /**
+   * Check if the node state is a key in map
+   */
+  private boolean isNewMapState(Map<State, Node> map, State state, String logTag) {
+    if (map.containsKey(state)) {
+      hitCount += 1;
+      Log.d(logTag, "state hit. " + state.toString());
       return false;
     }
     return true;
@@ -297,7 +319,7 @@ public class Search {
       Log.i("BFS", "solution found: " + nodeCount + " nodes searched");
       return genSolution(r);
     }
-    if (isValidNewState(r, "BFS")) {
+    if (isValidNewSetState(r.state, "BFS")) {
       // add to stateSpace to avoid cycle
       stateSpace.add(r.state);
       fringe.add(r);
@@ -314,7 +336,7 @@ public class Search {
             Log.i("BFS", "hitCount: " + hitCount);
             return genSolution(child);
           }
-          if (isValidNewState(child, "BFS")) {
+          if (isValidNewSetState(child.state, "BFS")) {
             stateSpace.add(child.state);
             fringe.add(child);
           }
@@ -341,7 +363,7 @@ public class Search {
       Log.i("DFS", "solution found: " + nodeCount + " nodes searched");
       return genSolution(r);
     }
-    if (isValidNewState(r, "DFS")) {
+    if (isValidNewSetState(r.state, "DFS")) {
       stateSpace.add(r.state);
       fringe.push(r);
     }
@@ -358,7 +380,7 @@ public class Search {
             Log.i("DFS", "hitCount: " + hitCount);
             return genSolution(child);
           }
-          if (isValidNewState(child, "DFS")) {
+          if (isValidNewSetState(child.state, "DFS")) {
             stateSpace.add(child.state);
             fringe.push(child);
           }
@@ -392,7 +414,7 @@ public class Search {
         + "  " + nodeCount + " nodes searched");
       return genSolution(r);
     }
-    if (isValidNewState(r, "DLS")) {
+    if (isValidNewSetState(r.state, "DLS")) {
       stateSpace.add(r.state);
       if (r.depth < depth) {
         fringe.push(r);
@@ -415,7 +437,7 @@ public class Search {
             Log.i("DLS", "hitCount: " + hitCount);
             return genSolution(child);
           }
-          if (isValidNewState(child, "DLS")) {
+          if (isValidNewSetState(child.state, "DLS")) {
             stateSpace.add(child.state);
             // If child depth is the same as depth arg, discard it. No need to expand it(put to fringe)
             if (childDepth < depth) {

@@ -3,8 +3,8 @@ package a1;
 import java.util.*;
 
 public class State {
-  private List<Position> mice = new LinkedList<>();
-  private List<Position> cats = new LinkedList<>();
+  private List<Position> mice = new ArrayList<>();
+  private List<Position> cats = new ArrayList<>();
   private Set<Position> cheeses = new HashSet<>();
 
   public List<Position> getMice() {
@@ -139,12 +139,12 @@ public class State {
 
   public static void main(String[] args) {
     /* Test State equals and hashCode */
-//    List<Position> mc = new LinkedList<>();
+//    List<Position> mc = new ArrayList<>();
 //    Position p1 = new Position(1, 1);
 //    mc.add(p1);
 //    mc.add(new Position(2, 0));
 //
-//    List<Position> ct = new LinkedList<>();
+//    List<Position> ct = new ArrayList<>();
 //    ct.add(new Position(3, 3));
 //    ct.add(new Position(3, 3));
 //    ct.add(new Position(5, 4));
@@ -168,7 +168,7 @@ public class State {
 
 
     /* Test List equals */
-//    List<Position> mc2 = new LinkedList<>(mc);
+//    List<Position> mc2 = new ArrayList<>(mc);
 //    System.out.println(mc2 == mc);
 //    System.out.println(mc2.equals(mc));
 //    mc2.remove(p1);
