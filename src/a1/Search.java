@@ -668,7 +668,7 @@ public class Search {
     }
     h += mice.size() * 100; // punishment for existing mice number
     h -= cheeses.size() * 100; // award for existing cheeses number
-    return (int) Math.round(h * 10);
+    return (int) Math.round(h * 10); // 10 is h_factor which correlates strongly with g_factor
   }
 
   private double calcH(int heuristic, Position p, Collection<Position> collection) {

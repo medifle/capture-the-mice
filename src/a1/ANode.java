@@ -18,9 +18,9 @@ public class ANode extends Node implements Comparable<ANode> {
   @Override
   public int compareTo(ANode node) {
     // todo: we should consider board size which affects h when it is measure in distance
-    // the int(g factor) is g weight which makes a lot of difference, see AStar optimal test
-    // if g factor is too larger with respect to the board size, it becomes BFS
-    // smaller board needs smaller g factor, is the relationship linear? not known yet
+    // the int(g_factor) is g weight which makes a lot of difference, see AStar optimal test
+    // if g_factor is too larger with respect to the board size, it becomes BFS
+    // smaller board needs smaller g_factor, is the relationship linear? not known yet
     return (h - node.h) + (depth - node.depth) * 260 * state.getCats().size();
   }
 

@@ -53,7 +53,7 @@ public class Game {
 //      init(12, 1, 1, 3);
 //      init(8, 3, 4, 6);
 //      init(20, 1, 1, 3);
-//      init(50, 1, 1, 3);
+//      init(50, 1, 1, 6);
 //      init(16, 4, 2, 8);
 //      init(12, "7,1;-2,6;-9,1;9,6;6,10;"); // from a1 spec
 //      init(12, "7,1;-2,6;-7,3;9,1;9,6;6,10;"); // cheese tie
@@ -67,7 +67,8 @@ public class Game {
 //      init(12, "6,9;-7,1;-5,8;10,2;0,10;"); // DFS fool
 //      init(12, "6,4;-11,5;-3,10;2,7;8,9;1,0;"); // DFS test
 //      init(12, "6,3;-0,4;-0,10;0,0;2,0;3,9;"); // DFS test2
-
+      //# DFS, IDDFS showtime AStar works, g_factor 1, BFS nightmare
+//      init(8, "5,0;5,6;3,5;-7,5;4,2;4,4;2,7;7,6;-4,3;6,7;5,7;2,5;3,0;3,1;");
 
       /* IDDFS test */
 //      init(30, 4, 2, 10); // IDDFS showtime
@@ -79,22 +80,24 @@ public class Game {
 //      init(10, "6,3;-4,1;-9,9;"); // IDDFS test6 no solution
 //      init(8, "0,4;3,1;2,7;-7,7;5,1;7,3;-3,3;2,3;2,4;0,6;6,3;7,5;");
 //      init(30, "23,14;25,0;21,13;7,7;-19,4;13,21;-0,15;3,3;4,20;3,21;24,10;18,5;12,0;20,24;29,22;27,22;");
+//      init(50, "28,47;-40,13;-31,33;36,42;35,48;");
 
 
       /* AStar optimal test */
 //      init(8, 3, 3, 6);
 //      init(8, 3, 5, 6);
+//      init(8, "4,4;1,0;0,4;-7,4;1,1;6,5;5,3;7,5;-4,3;2,4;0,2;7,1;6,0;6,2;"); // AStar works best
 //      init(8, "7,7;1,7;6,2;-0,2;0,7;3,6;2,4;5,6;-3,4;1,3;7,1;7,3;5,1;6,4;");
-//      init(8, "2,7;1,3;1,5;-3,1;1,6;0,0;1,7;6,1;-0,2;1,4;0,4;0,7;6,2;7,4;"); // AStar showtime, g factor >15
-//      init(8, "5,0;5,6;3,5;-7,5;4,2;4,4;2,7;7,6;-4,3;6,7;5,7;2,5;3,0;3,1;"); // AStar showtime, g factor 260
+//      init(8, "2,7;1,3;1,5;-3,1;1,6;0,0;1,7;6,1;-0,2;1,4;0,4;0,7;6,2;7,4;"); // AStar showtime, g_factor >15
+
 //      init(16, 3, 3, 8);
 //      init(16, "6,4;4,5;5,7;-3,6;4,7;2,1;5,1;-4,3;1,0;7,6;4,4;3,7;7,4;");
 
-//      # not optimal (Solved) g factor 260
+//      # not optimal (Solved) g_factor 260
 //      init(30, "8,22;7,29;12,6;8,20;-6,12;26,25;-10,25;21,7;17,19;16,4;2,26;10,20;29,24;13,26;11,25;1,15;");
 
       // AStar test: not optimal (Solved)
-      init(16, "7,5;8,1;2,12;9,15;-5,1;4,15;-2,4;13,1;1,6;13,3;13,5;5,14;11,5;3,14;");
+//      init(16, "7,5;8,1;2,12;9,15;-5,1;4,15;-2,4;13,1;1,6;13,3;13,5;5,14;11,5;3,14;");
 
 //      #1cat optimal
 //      init(16, "10,5;-11,4;-2,4;13,1;1,6;13,3;13,5;5,14;11,5;3,14;");
@@ -104,11 +107,11 @@ public class Game {
 //      init(16, "-12,5;8,10;-2,4;13,1;1,6;13,3;13,5;5,14;3,14;"); // depth 2(solution): PASS
 
       /* BFS test: storing State is more memory efficient than storing String */
-      // AStar not optimal: 1 extra level with g factor 260
+      // AStar not optimal: 1 extra level with g_factor 260
 //      init(20, "7,4;5,11;10,19;7,9;-8,11;19,13;-10,9;4,4;2,2;16,0;10,14;8,3;8,4;17,14;");
 //      init(12, "1,5;3,5;-11,6;11,6;-6,5;10,9;0,8;10,5;9,6;"); // BFS: big difference in searched nodes if cats sorted
 //      init(30, "8,22;7,29;12,6;8,20;-6,12;26,25;-10,25;21,7;17,19;16,4;2,26;10,20;29,24;13,26;11,25;1,15;");
-//      init(8, "5,3;2,7;0,5;-7,1;2,4;0,0;1,0;1,3;-5,4;1,4;3,7;4,1;6,3;2,0;"); // AStar g factor 2
+//      init(8, "5,3;2,7;0,5;-7,1;2,4;0,0;1,0;1,3;-5,4;1,4;3,7;4,1;6,3;2,0;"); // AStar g_factor 2
 
 
       if (actionSeq.size() == 0) {
@@ -117,7 +120,7 @@ public class Game {
 //        actionSeq = ai.AStar(HeuristicType.HYBRID.getType());
         actionSeq = ai.AStarME(HeuristicType.HYBRID.getType());
 //        actionSeq = ai.DFS();
-//        actionSeq = ai.DLS(3, true);
+//        actionSeq = ai.DLS(15, true);
 //        actionSeq = ai.IDDFS();
 
         if (actionSeq == null) {
