@@ -22,13 +22,13 @@ public class Node implements Comparable<Node> {
   @Override
   public int compareTo(Node node) {
     // todo: we should consider board size which affects h when it is measure in distance
-    // the int 10 is g weight which makes a lot of difference, see AStar optimal test
-    return (h - node.h) + (depth - node.depth) * 10 * state.getCats().size();
+    // the int(g factor) is g weight which makes a lot of difference, see AStar optimal test
+    return (h - node.h) + (depth - node.depth) * 260 * state.getCats().size();
   }
 
   @Override
   public String toString() {
-    return h + "," + depth * 10 * state.getCats().size() + "@" + state.toString();
+    return h + "," + depth * 260 * state.getCats().size() + "@" + state.toString();
   }
 
   public static void main(String[] args) {

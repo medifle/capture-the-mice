@@ -29,6 +29,14 @@ public class Search {
     return Point2D.distance(p1.getX(), p1.getY(), p2.getX(), p2.getY());
   }
 
+  private double manhattanDistance(Position p1, Position p2) {
+    return Math.abs(p1.getX() - p2.getX()) + Math.abs(p1.getY() - p2.getY());
+  }
+
+  private double hybridDistance(Position p1, Position p2) {
+    return (euclideanDistance(p1, p2) + manhattanDistance(p1, p2)) / 2;
+  }
+
   private Position calcClosestPos(Position p, Position[] posArr) {
     double distance = Double.MAX_VALUE;
     Position minPos = null;
@@ -512,9 +520,9 @@ public class Search {
 
   /**
    * A* Search
-   * todo: heuristic: Euclidean distance, Manhattan distance, hybrid of the two
+   * @param heuristic 0: Euclidean distance, 1: Manhattan distance, 2: hybrid of 0 and 1
    */
-  public Queue<State> AStar() {
+  public Queue<State> AStar(int heuristic) {
     nodeCount = 0;
     Map<State, Node> stateNodeMap = new HashMap<>();
     Queue<Node> open = new PriorityQueue<>();
@@ -527,7 +535,7 @@ public class Search {
       return genSolution(r);
     }
     if (isValidState(r.state, "AStar")) {
-      r.h = evaluate(r.state);
+      r.h = evaluate(r.state, heuristic);
       stateNodeMap.put(r.state, r);
       open.add(r);
     }
@@ -543,7 +551,7 @@ public class Search {
       if (children != null) {
         nodeCount += children.size();
         for (Node child : children) {
-          child.h = evaluate(child.state);//test?
+          child.h = evaluate(child.state, heuristic);
           Log.d("AStar", "child: " + child);
 
           if (testGoal(child)) {
@@ -573,9 +581,9 @@ public class Search {
 
   /**
    * Calculate h value for Node u
-   * todo: using heuristic specified by arg
+   * @param heuristic 0: Euclidean distance, 1: Manhattan distance, 2: hybrid of 0 and 1
    */
-  private int evaluate(State state) {
+  private int evaluate(State state, int heuristic) {
     List<Position> mice = state.getMice();
     List<Position> cats = state.getCats();
     Set<Position> cheeses = state.getCheeses();
@@ -583,7 +591,7 @@ public class Search {
     double h = 0;
 
     for (Position cp : cats) {
-      double subH = calcH(cp, mice);
+      double subH = calcH(heuristic, cp, mice);
 //      System.out.println("subH " + subH);//test
       h += subH;
     }
@@ -592,14 +600,23 @@ public class Search {
     return (int) Math.round(h * 10);
   }
 
-  private double calcH(Position p, Collection<Position> collection) {
+  private double calcH(int heuristic, Position p, Collection<Position> collection) {
     if (collection.size() == 0) {
       return 0;
     }
 
     double minDistanceToBase = Double.MAX_VALUE;
     for (Position cp : collection) {
-      double result = euclideanDistance(p, cp);
+      double result;
+      if (heuristic == 0) {
+        result = euclideanDistance(p, cp);
+      } else if (heuristic == 1) {
+        result = manhattanDistance(p, cp);
+      } else if (heuristic == 2) {
+        result = hybridDistance(p, cp);
+      } else {
+        return 0;
+      }
       if (result < minDistanceToBase) {
         minDistanceToBase = result;
       }
@@ -610,19 +627,19 @@ public class Search {
   /**
    * Get h for a given state and print state to board
    */
-  public static void analyzeState(int rows, int cols, String stateStr) {
+  public static void analyzeState(int rows, int cols, int heuristic, String stateStr) {
     Board bd = new Board(rows, cols);
     State state = bd.loadState(stateStr);
     Game.printState(state, rows, cols);
 
     Search ai = new Search(state, bd, 1);
-    int h = ai.evaluate(state);
+    int h = ai.evaluate(state, heuristic);
     System.out.println(h);
   }
 
   public static void main(String[] args) {
 
-//    analyzeState(16, 16, "12,5;-11,4;8,10;-2,4;13,1;1,6;13,3;13,5;5,14;3,14;");
-//    analyzeState(16, 16, "11,5;-10,6;7,12;-2,4;13,1;1,6;13,3;13,5;5,14;3,14;");
+//    analyzeState(16, 16, 2, "12,5;-11,4;8,10;-2,4;13,1;1,6;13,3;13,5;5,14;3,14;");
+//    analyzeState(16, 16, 2, "11,5;-10,6;7,12;-2,4;13,1;1,6;13,3;13,5;5,14;3,14;");
   }
 }
