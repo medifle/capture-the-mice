@@ -4,6 +4,7 @@ public class Log {
   private static int ERROR = 1;
   private static int INFO = 2;
   private static int DEBUG = 3;
+  private static int SILLY = 4;
 
   private static int level = 2;
 
@@ -21,6 +22,12 @@ public class Log {
 
   public static void d(String tag, String content) {
     if (level >= DEBUG) {
+      System.out.println(tag + ": " + content);
+    }
+  }
+
+  public static void s(String tag, String content) {
+    if (level >= SILLY) {
       System.out.println(tag + ": " + content);
     }
   }

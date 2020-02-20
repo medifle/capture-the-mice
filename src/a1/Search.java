@@ -66,7 +66,7 @@ public class Search {
     // calc mouse next position
     Position rp = genMouseMove(p, minCp, mouseSpeed);
 
-    Log.d("calcMouseNextPos", "closest cheese " + minCp.toString() +
+    Log.s("calcMouseNextPos", "closest cheese " + minCp.toString() +
       "; current position: " + p + "; next position: " + rp);
 
     return rp;
@@ -124,8 +124,13 @@ public class Search {
     return rp;
   }
 
-  private List<Node> expand(Node u) {
-    Log.d("EXPAND", "u depth " + u.depth + "  " + u.state.toString());
+  /**
+   * Expand a node to get its children
+   * @param u the node to be expanded
+   * @param nodeType  0: Node, 1: Anode
+   */
+  private List<Node> expand(Node u, int nodeType) {
+    Log.d("EXPAND", "" + u);
 
     List<Position> uMice = u.state.getMice();
     List<Position> uCats = u.state.getCats();
@@ -165,7 +170,12 @@ public class Search {
         // cheeses and mice positions are the same.
         Collections.sort(nextCats);
         State state = new State(nextMice, nextCats, nextCheeses);
-        Node node = new Node(state, u);
+        Node node = null;
+        if (nodeType == 0) {
+          node = new Node(state, u);
+        } else if (nodeType == 1) {
+          node = new ANode(state, (ANode)u);
+        }
         expandedNodes.add(node);
       }
     }
@@ -310,9 +320,9 @@ public class Search {
   }
 
   /**
-   * Check if the node state is a key in map
+   * Check if the ANode state is a key in map
    */
-  private boolean isNewMapState(Map<State, Node> map, State state, String logTag) {
+  private boolean isNewMapState(Map<State, ANode> map, State state, String logTag) {
     if (map.containsKey(state)) {
       hitCount += 1;
       Log.d(logTag, "state hit. " + state.toString());
@@ -328,6 +338,8 @@ public class Search {
     Node r = new Node(state);
     nodeCount += 1;
 
+    Log.i("BFS", "initial state: " + state);
+
     if (testGoal(r)) {
       Log.i("BFS", "solution found: " + nodeCount + " nodes searched");
       return genSolution(r);
@@ -340,7 +352,7 @@ public class Search {
 
     while (!fringe.isEmpty()) {
       Node u = fringe.poll();
-      List<Node> children = expand(u);
+      List<Node> children = expand(u, 0);
       if (children != null) {
         nodeCount += children.size();
         for (Node child : children) {
@@ -372,6 +384,8 @@ public class Search {
     Node r = new Node(state);
     nodeCount += 1;
 
+    Log.i("DFS", "initial state: " + state);
+
     if (testGoal(r)) {
       Log.i("DFS", "solution found: " + nodeCount + " nodes searched");
       return genSolution(r);
@@ -383,7 +397,7 @@ public class Search {
 
     while (!fringe.empty()) {
       Node u = fringe.pop();
-      List<Node> children = expand(u);
+      List<Node> children = expand(u, 0);
       if (children != null) {
         nodeCount += children.size();
         Collections.reverse(children); // optional
@@ -436,7 +450,7 @@ public class Search {
 
     while (!fringe.empty()) {
       Node u = fringe.pop();
-      List<Node> children = expand(u);
+      List<Node> children = expand(u, 0);
       if (children != null) {
         nodeCount += children.size();
         Collections.reverse(children); // optional
@@ -472,6 +486,7 @@ public class Search {
    */
   public Queue<State> IDDFS() {
     nodeCount = 0;
+    Log.i("IDDFS", "initial state: " + state);
     Log.i("IDDFS", "Start searching...");
 
     for (int i = 0; i < Integer.MAX_VALUE; ++i) {
@@ -486,9 +501,9 @@ public class Search {
     return null;
   }
 
-  private void AStarNodeUpdate(Queue<Node> open, Map<State, Node> map, Node u, int gDiff) {
+  private void AStarNodeUpdate(Queue<ANode> open, Map<State, ANode> map, ANode u, int gDiff) {
     Log.d("AStar_AStarNodeUpdate", "" + u + "  gDiff " + gDiff);
-    Node old = map.get(u.state);
+    ANode old = map.get(u.state);
     Log.d("AStar_AStarNodeUpdate_OLD", "" + old);
     if (u.compareTo(old) < 0) { // thisNode has a better f(n)
       // change oldNode parent
@@ -506,11 +521,11 @@ public class Search {
     }
     if (gDiff > 0) {
       // update children and subtrees g cost using iterative DFS
-      Stack<Node> cStack = new Stack<>();
+      Stack<ANode> cStack = new Stack<>();
       if (old.children != null) {
         cStack.addAll(old.children);
         while (!cStack.empty()) {
-          Node child = cStack.pop();
+          ANode child = cStack.pop();
           child.depth -= gDiff;
           AStarNodeUpdate(open, map, child, gDiff);
         }
@@ -524,11 +539,13 @@ public class Search {
    */
   public Queue<State> AStar(int heuristic) {
     nodeCount = 0;
-    Map<State, Node> stateNodeMap = new HashMap<>();
-    Queue<Node> open = new PriorityQueue<>();
+    Map<State, ANode> stateNodeMap = new HashMap<>();
+    Queue<ANode> open = new PriorityQueue<>();
 
-    Node r = new Node(state);
+    ANode r = new ANode(state);
     nodeCount += 1;
+
+    Log.i("AStar", "initial state: " + state);
 
     if (testGoal(r)) {
       Log.i("AStar", "solution found: " + nodeCount + " nodes searched");
@@ -541,16 +558,16 @@ public class Search {
     }
 
     while (!open.isEmpty()) {
-      Node u = open.poll();
-      Log.i("AStar_TEST_POLL", "" + u);
+      ANode u = open.poll();
 
       if (u.children == null) {
         u.children = new ArrayList<>();
       }
-      List<Node> children = expand(u);
+      List<Node> children = expand(u, 1);
       if (children != null) {
         nodeCount += children.size();
-        for (Node child : children) {
+        for (Node nc : children) {
+          ANode child = (ANode) nc;
           child.h = evaluate(child.state, heuristic);
           Log.d("AStar", "child: " + child);
 
@@ -566,7 +583,6 @@ public class Search {
               stateNodeMap.put(child.state, child);
               open.add(child);
             } else {
-              Log.d("AStar_TEST", "BLACK HOLE");
               AStarNodeUpdate(open, stateNodeMap, child, 0);
             }
           }
@@ -581,14 +597,18 @@ public class Search {
 
   /**
    * Simplified A* search focusing on memory efficiency
+   * As in this game we don't encounter the case that an existing node needs to change parent and update subtree
+   * So we don't have to store all Node references
    * @param heuristic 0: Euclidean distance, 1: Manhattan distance, 2: hybrid of 0 and 1
    */
   public Queue<State> AStarME(int heuristic) {
     nodeCount = 0;
-    Queue<Node> open = new PriorityQueue<>();
+    Queue<ANode> open = new PriorityQueue<>();
 
-    Node r = new Node(state);
+    ANode r = new ANode(state);
     nodeCount += 1;
+
+    Log.i("AStarME", "initial state: " + state);
 
     if (testGoal(r)) {
       Log.i("AStarME", "solution found: " + nodeCount + " nodes searched");
@@ -602,12 +622,12 @@ public class Search {
 
     while (!open.isEmpty()) {
       Node u = open.poll();
-      Log.i("AStarME_TEST_POLL", "" + u);
 
-      List<Node> children = expand(u);
+      List<Node> children = expand(u, 1);
       if (children != null) {
         nodeCount += children.size();
-        for (Node child : children) {
+        for (Node nc : children) {
+          ANode child = (ANode) nc;
           child.h = evaluate(child.state, heuristic);
           Log.d("AStarME", "child: " + child);
 
