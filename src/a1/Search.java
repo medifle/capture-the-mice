@@ -580,6 +580,57 @@ public class Search {
   }
 
   /**
+   * Simplified A* search focusing on memory efficiency
+   * @param heuristic 0: Euclidean distance, 1: Manhattan distance, 2: hybrid of 0 and 1
+   */
+  public Queue<State> AStarME(int heuristic) {
+    nodeCount = 0;
+    Queue<Node> open = new PriorityQueue<>();
+
+    Node r = new Node(state);
+    nodeCount += 1;
+
+    if (testGoal(r)) {
+      Log.i("AStarME", "solution found: " + nodeCount + " nodes searched");
+      return genSolution(r);
+    }
+    if (isValidState(r.state, "AStarME")) {
+      r.h = evaluate(r.state, heuristic);
+      stateSpace.add(r.state);
+      open.add(r);
+    }
+
+    while (!open.isEmpty()) {
+      Node u = open.poll();
+      Log.i("AStarME_TEST_POLL", "" + u);
+
+      List<Node> children = expand(u);
+      if (children != null) {
+        nodeCount += children.size();
+        for (Node child : children) {
+          child.h = evaluate(child.state, heuristic);
+          Log.d("AStarME", "child: " + child);
+
+          if (testGoal(child)) {
+            Log.i("AStarME", "solution found: " + nodeCount + " nodes searched");
+            Log.i("AStarME", "hitCount: " + hitCount);
+            Log.i("AStarME", "node: " + child);
+            return genSolution(child);
+          }
+          if (isValidNewSetState(child.state, "AStarME")) {
+            stateSpace.add(child.state);
+            open.add(child);
+          }
+        }
+      }
+    }
+
+    // run out of searchable nodes
+    Log.i("AStar", "solution not found: " + nodeCount + " nodes searched");
+    return null;
+  }
+
+  /**
    * Calculate h value for Node u
    * @param heuristic 0: Euclidean distance, 1: Manhattan distance, 2: hybrid of 0 and 1
    */

@@ -73,16 +73,18 @@ public class Game {
 //      init(10, "4,9;-9,2;-0,8;1,5;3,7;"); // IDDFS test4
 //      init(10, "3,3;-4,1;-7,2;5,5;8,5;"); // IDDFS test5
 //      init(10, "6,3;-4,1;-9,9;"); // IDDFS test6 no solution
+//      init(8, "0,4;3,1;2,7;-7,7;5,1;7,3;-3,3;2,3;2,4;0,6;6,3;7,5;"); // IDDFS test7
 
 
 
       /* AStar optimal test */
+//      init(8, 3, 3, 6);
 //      init(8, 3, 5, 6);
 //      init(8, "7,7;1,7;6,2;-0,2;0,7;3,6;2,4;5,6;-3,4;1,3;7,1;7,3;5,1;6,4;");
 //      init(8, "2,7;1,3;1,5;-3,1;1,6;0,0;1,7;6,1;-0,2;1,4;0,4;0,7;6,2;7,4;"); // AStar showtime, g factor >15
+//      init(8, "5,0;5,6;3,5;-7,5;4,2;4,4;2,7;7,6;-4,3;6,7;5,7;2,5;3,0;3,1;"); // AStar showtime, g factor 260
 //      init(16, 3, 3, 8);
 //      init(16, "6,4;4,5;5,7;-3,6;4,7;2,1;5,1;-4,3;1,0;7,6;4,4;3,7;7,4;");
-
 
 
 //      # not optimal (Solved) g factor 260
@@ -104,7 +106,8 @@ public class Game {
       if (actionSeq.size() == 0) {
         Search ai = new Search(state, board, 1);
 //        actionSeq = ai.BFS();
-        actionSeq = ai.AStar(HeuristicType.HYBRID.getType());
+//        actionSeq = ai.AStar(HeuristicType.HYBRID.getType());
+        actionSeq = ai.AStarME(HeuristicType.HYBRID.getType());
 //        actionSeq = ai.DFS();
 //        actionSeq = ai.DLS(3, true);
 //        actionSeq = ai.IDDFS();
