@@ -2,11 +2,11 @@ package a1;
 
 import java.util.List;
 
-public class Node {
+public class Node implements Comparable<Node> {
   State state;
   Node parent;
   int depth;
-  int h;
+  int h = Integer.MAX_VALUE;
   List<Node> children;
 
   public Node(State state) {
@@ -20,8 +20,15 @@ public class Node {
   }
 
   @Override
+  public int compareTo(Node node) {
+    // todo: we should consider board size which affects h when it is measure in distance
+    // the int 10 is g weight which makes a lot of difference, see AStar optimal test
+    return (h - node.h) + (depth - node.depth) * 10 * state.getCats().size();
+  }
+
+  @Override
   public String toString() {
-    return depth + "@" + state.toString();
+    return h + "," + depth * 10 * state.getCats().size() + "@" + state.toString();
   }
 
   public static void main(String[] args) {

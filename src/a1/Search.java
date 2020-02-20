@@ -29,27 +29,32 @@ public class Search {
     return Point2D.distance(p1.getX(), p1.getY(), p2.getX(), p2.getY());
   }
 
+  private Position calcClosestPos(Position p, Position[] posArr) {
+    double distance = Double.MAX_VALUE;
+    Position minPos = null;
+    for (Position cp : posArr) {
+      double result = euclideanDistance(p, cp);
+      if (result < distance) {
+        distance = result;
+        minPos = cp;
+      }
+    }
+    return minPos;
+  }
+
   private Position calcMouseNextPos(Position p, Set<Position> cheeses) {
     if (cheeses.size() == 0) {
       Log.d("calcMouseNextPos", "cheese set is empty");
       return null;
     }
 
-    // get closest cheese by calculating Euclidean distance
-    double distance = Double.MAX_VALUE;
-    Position minCp = null;
-
     // Mouse cheese preference for South-East direction
     Position[] cheeseArr = cheeses.toArray(new Position[0]);
     Arrays.sort(cheeseArr, Collections.reverseOrder());
 
-    for (Position cp : cheeseArr) {
-      double result = euclideanDistance(p, cp);
-      if (result < distance) {
-        distance = result;
-        minCp = cp;
-      }
-    }
+    // get closest cheese by calculating Euclidean distance
+    Position minCp = calcClosestPos(p, cheeseArr);
+
     // calc mouse next position
     Position rp = genMouseMove(p, minCp, mouseSpeed);
 
@@ -473,14 +478,151 @@ public class Search {
     return null;
   }
 
+  private void AStarNodeUpdate(Queue<Node> open, Map<State, Node> map, Node u, int gDiff) {
+    Log.d("AStar_AStarNodeUpdate", "" + u + "  gDiff " + gDiff);
+    Node old = map.get(u.state);
+    Log.d("AStar_AStarNodeUpdate_OLD", "" + old);
+    if (u.compareTo(old) < 0) { // thisNode has a better f(n)
+      // change oldNode parent
+      boolean isRemoved = old.parent.children.remove(old);
+      old.parent = u.parent;
+      boolean isRemoved2 = old.parent.children.remove(u);
+      boolean isAdded = old.parent.children.add(old);
+      Log.i("AStar_TEST_AStarNodeUpdate_CHANGE_PARENT", "" + isRemoved + isRemoved2 + isAdded);
+      // update old Node cost g, which is depth. h is the same, no need to change
+      gDiff = old.depth - u.depth;
+      old.depth -= gDiff;
+      // update its order in open priority queue
+      open.remove(old);
+      open.add(old);
+    }
+    if (gDiff > 0) {
+      // update children and subtrees g cost using iterative DFS
+      Stack<Node> cStack = new Stack<>();
+      if (old.children != null) {
+        cStack.addAll(old.children);
+        while (!cStack.empty()) {
+          Node child = cStack.pop();
+          child.depth -= gDiff;
+          AStarNodeUpdate(open, map, child, gDiff);
+        }
+      }
+    }
+  }
+
   /**
    * A* Search
+   * todo: heuristic: Euclidean distance, Manhattan distance, hybrid of the two
    */
-//  public Queue<State> Astar() {
-//
-//  }
+  public Queue<State> AStar() {
+    nodeCount = 0;
+    Map<State, Node> stateNodeMap = new HashMap<>();
+    Queue<Node> open = new PriorityQueue<>();
 
-//  public static void main(String[] args) {
-//
-//  }
+    Node r = new Node(state);
+    nodeCount += 1;
+
+    if (testGoal(r)) {
+      Log.i("AStar", "solution found: " + nodeCount + " nodes searched");
+      return genSolution(r);
+    }
+    if (isValidState(r.state, "AStar")) {
+      r.h = evaluate(r.state);
+      stateNodeMap.put(r.state, r);
+      open.add(r);
+    }
+
+    while (!open.isEmpty()) {
+      Node u = open.poll();
+      Log.i("AStar_TEST_POLL", "" + u);
+
+      if (u.children == null) {
+        u.children = new ArrayList<>();
+      }
+      List<Node> children = expand(u);
+      if (children != null) {
+        nodeCount += children.size();
+        for (Node child : children) {
+          child.h = evaluate(child.state);//test?
+          Log.d("AStar", "child: " + child);
+
+          if (testGoal(child)) {
+            Log.i("AStar", "solution found: " + nodeCount + " nodes searched");
+            Log.i("AStar", "hitCount: " + hitCount);
+            Log.i("AStar", "node: " + child);
+            return genSolution(child);
+          }
+          if (isValidState(child.state, "AStar")) {
+            u.children.add(child);
+            if (isNewMapState(stateNodeMap, child.state, "AStar")) {
+              stateNodeMap.put(child.state, child);
+              open.add(child);
+            } else {
+              Log.d("AStar_TEST", "BLACK HOLE");
+              AStarNodeUpdate(open, stateNodeMap, child, 0);
+            }
+          }
+        }
+      }
+    }
+
+    // run out of searchable nodes
+    Log.i("AStar", "solution not found: " + nodeCount + " nodes searched");
+    return null;
+  }
+
+  /**
+   * Calculate h value for Node u
+   * todo: using heuristic specified by arg
+   */
+  private int evaluate(State state) {
+    List<Position> mice = state.getMice();
+    List<Position> cats = state.getCats();
+    Set<Position> cheeses = state.getCheeses();
+
+    double h = 0;
+
+    for (Position cp : cats) {
+      double subH = calcH(cp, mice);
+//      System.out.println("subH " + subH);//test
+      h += subH;
+    }
+    h += mice.size() * 100; // punishment for existing mice number
+    h -= cheeses.size() * 100; // award for existing cheeses number
+    return (int) Math.round(h * 10);
+  }
+
+  private double calcH(Position p, Collection<Position> collection) {
+    if (collection.size() == 0) {
+      return 0;
+    }
+
+    double minDistanceToBase = Double.MAX_VALUE;
+    for (Position cp : collection) {
+      double result = euclideanDistance(p, cp);
+      if (result < minDistanceToBase) {
+        minDistanceToBase = result;
+      }
+    }
+    return minDistanceToBase;
+  }
+
+  /**
+   * Get h for a given state and print state to board
+   */
+  public static void analyzeState(int rows, int cols, String stateStr) {
+    Board bd = new Board(rows, cols);
+    State state = bd.loadState(stateStr);
+    Game.printState(state, rows, cols);
+
+    Search ai = new Search(state, bd, 1);
+    int h = ai.evaluate(state);
+    System.out.println(h);
+  }
+
+  public static void main(String[] args) {
+
+//    analyzeState(16, 16, "12,5;-11,4;8,10;-2,4;13,1;1,6;13,3;13,5;5,14;3,14;");
+//    analyzeState(16, 16, "11,5;-10,6;7,12;-2,4;13,1;1,6;13,3;13,5;5,14;3,14;");
+  }
 }

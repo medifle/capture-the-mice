@@ -2,11 +2,11 @@ package a1;
 
 import java.util.*;
 
-public class Position implements Comparable<Position>{
+public class Position implements Comparable<Position> {
   private int x;
   private int y;
 
-  public Position(int x, int y){
+  public Position(int x, int y) {
     this.x = x;
     this.y = y;
   }
@@ -18,14 +18,18 @@ public class Position implements Comparable<Position>{
     this.y = Integer.parseInt(sArr[1]);
   }
 
-  public int getX(){ return x; }
-  public int getY(){ return y; }
+  public int getX() {
+    return x;
+  }
+
+  public int getY() {
+    return y;
+  }
 
 //  public void update(int x, int y) {
 //    this.x = x;
 //    this.y = y;
 //  }
-
 
   /**
    * Auto generated equals
@@ -50,19 +54,19 @@ public class Position implements Comparable<Position>{
 
   @Override
   public int compareTo(Position p) {
-    return (x+y) - (p.getX() + p.getY());
+    return (x + y) - (p.getX() + p.getY());
   }
 
   @Override
-  public String toString(){
-    return x+","+y;
+  public String toString() {
+    return x + "," + y;
   }
 
   public static void main(String[] args) {
-//    Position aa = new Position(1, 1);
-//    Position dd = new Position(1, 1);
-//    Position bb = new Position(3, 4);
-//    Position cc = new Position(7, 4);
+    Position aa = new Position(1, 1);
+    Position dd = new Position(1, 1);
+    Position bb = new Position(3, 4);
+    Position cc = new Position(7, 4);
 //    System.out.println(aa.equals(dd));
 //
 //    Set<Position> hset = new HashSet<>();
@@ -74,6 +78,23 @@ public class Position implements Comparable<Position>{
 //    Arrays.sort(arr, Collections.reverseOrder());
 //    for (Position p : arr) {
 //      System.out.println(p);
+//    }
+
+
+    // PriorityQueue element update pitfall
+//    Queue<Position> open = new PriorityQueue<>();
+//    open.add(aa);
+//    open.add(cc);
+//    open.add(dd);
+//    open.add(bb);
+//
+//    aa.update(9,9);// queue order will not be updated!
+//
+//    open.remove(aa);
+//    open.add(aa);
+//
+//    while (!open.isEmpty()) {
+//      System.out.println(open.poll());
 //    }
   }
 }

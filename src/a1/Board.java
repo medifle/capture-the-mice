@@ -3,7 +3,8 @@ package a1;
 import java.util.*;
 
 public class Board {
-  /** cell type id
+  /**
+   * cell type id
    * 0: empty
    * 1: mouse
    * 2: cat
@@ -90,22 +91,29 @@ public class Board {
     String[] cArr = c.split(";");
     String[] eArr = e.split(";");
 
-    List<Position> mice = new LinkedList<>();;
+    List<Position> mice = new LinkedList<>();
+    ;
     List<Position> cats = new LinkedList<>();
     Set<Position> cheeses = new HashSet<>();
     for (String ms : mArr) {
-      Position mp = new Position(ms);
-      mice.add(mp);
+      if (!ms.equals("")) {
+        Position mp = new Position(ms);
+        mice.add(mp);
+      }
     }
 
     for (String cs : cArr) {
-      Position cp = new Position(cs);
-      cats.add(cp);
+      if (!cs.equals("")) {
+        Position cp = new Position(cs);
+        cats.add(cp);
+      }
     }
 
     for (String es : eArr) {
-      Position ep = new Position(es);
-      cheeses.add(ep);
+      if (!es.equals("")) {
+        Position ep = new Position(es);
+        cheeses.add(ep);
+      }
     }
 
     State state = new State(mice, cats, cheeses);
@@ -143,15 +151,8 @@ public class Board {
 
 
   public static void main(String[] args) {
-
-//    Board board = new Board(12);
-//    board.loadState("7,1;-2,6;-9,1;9,6;6,10;");
-//    board.loadState("7,1;-2,6;-6,10;9,1;9,6;");
-//    System.out.println(board.toString());
-
     //    Board board = new Board(12);
     //    board.initRandomState();
     //    System.out.println(board.toString());
-
   }
 }
